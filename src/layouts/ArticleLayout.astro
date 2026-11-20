@@ -14,7 +14,9 @@ import { getRelatedFor, resolve, type ArticleEntry } from '../lib/collections';
 import { isPublished } from '../lib/content';
 import { absoluteUrl, articleLd, pageTitle, type Crumb } from '../lib/seo';
 import { ads } from '../lib/site-env';
-import { authorHref, COLLECTION_LABEL } from '../lib/urls';
+import { DEFAULT_LOCALE, localeOf } from '../i18n/locales';
+import { useTranslations } from '../i18n/ui';
+import { authorHref } from '../lib/urls';
 import BaseLayout from './BaseLayout.astro';
 
 interface Props {
@@ -29,6 +31,8 @@ interface Props {
 
 const { entry, eyebrow, crumbs, jsonLd = [], filters = {} } = Astro.props;
 const d = entry.data;
+const locale = localeOf(entry.id);
+const t = useTranslations(locale);
 const [author, related] = await Promise.all([resolve(d.author), getRelatedFor(entry)]);
 const description = d.seoDescription ?? d.summary;
 const url = absoluteUrl(Astro.url.pathname, Astro.site!);
@@ -36,8 +40,10 @@ const url = absoluteUrl(Astro.url.pathname, Astro.site!);
 const pin = pinPath(entry.collection, entry.id);
 const pinMedia = existsSync(join(process.cwd(), 'public', pin)) ? absoluteUrl(pin, Astro.site!) : undefined;
 // Author pages exist only for published work, so drafts don't link to them.
-const authorPath = isPublished(d) ? authorHref(author.id) : undefined;
-const type = COLLECTION_LABEL[entry.collection];
+const authorPath = isPublished(d) ? authorHref(author.id, locale) : undefined;
+const type = t(`type.${entry.collection}`);
+// Analytics reports content types in English whatever the page language.
+const contentType = useTranslations(DEFAULT_LOCALE)(`type.${entry.collection}`).toLowerCase();
 const article = articleLd({
   headline: d.title,
   description,
@@ -56,7 +62,7 @@ const pagefindFilters = Object.entries({ type: [type], ...filters }).flatMap(([n
 );
 const factsToVerify = entry.collection === 'guides' ? entry.data.factsToVerify : [];
 // The in-content ad is placed in the rendered article column (see insertInContentAd).
-const mainHtml = insertInContentAd(await Astro.slots.render('default'), adSlotHtml('incontent', ads));
+const mainHtml = insertInContentAd(await Astro.slots.render('default'), adSlotHtml('incontent', ads, t('common.advertisement')));
 ---
 
 <BaseLayout
@@ -84,13 +90,13 @@ const mainHtml = insertInContentAd(await Astro.slots.render('default'), adSlotHt
       <div class="article-main" set:html={mainHtml} />
       {
         ads?.slots.sidebar && (
-          <aside class="article-aside" aria-label="Advertisement" data-pagefind-ignore="all">
+          <aside class="article-aside" aria-label={t('common.advertisement')} data-pagefind-ignore="all">
             <AdSlot placement="sidebar" />
           </aside>
         )
       }
     </div>
-    <ShareButtons title={d.title} url={url} contentType={type.toLowerCase()} pinMedia={pinMedia} />
+    <ShareButtons title={d.title} url={url} contentType={contentType} pinMedia={pinMedia} />
     {isPublished(d) && <NewsletterSignup placement="article" />}
     <RelatedContent items={related} />
     <AdSlot placement="footer" />

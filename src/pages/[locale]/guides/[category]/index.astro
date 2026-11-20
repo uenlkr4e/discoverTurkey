@@ -1,0 +1,10 @@
+---
+// Translated version of src/pages/guides/[category]/index.astro, built from the same template for each other language.
+import type { ComponentProps } from 'astro/types';
+import Page from '../../../guides/[category]/index.astro';
+import { guideCategoryPaths, inOtherLocales } from '../../../../lib/routes';
+
+export const getStaticPaths = () => inOtherLocales(guideCategoryPaths);
+---
+
+<Page {...(Astro.props as ComponentProps<typeof Page>)} />

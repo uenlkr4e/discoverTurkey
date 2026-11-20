@@ -1,21 +1,54 @@
 ---
 import { NAV, SITE } from '../config/site';
+import { LOCALES, localizePath, toLocale, type Locale } from '../i18n/locales';
+import { useTranslations } from '../i18n/ui';
+import { getBuiltPaths } from '../lib/collections';
 
+interface Props {
+  /** Versions of this page in other languages. */
+  alternates?: { locale: Locale; href: string }[];
+}
+
+const { alternates = [] } = Astro.props;
+const locale = toLocale(Astro.currentLocale);
+const t = useTranslations(locale);
+const built = await getBuiltPaths();
+// Link to this language's section when it exists, otherwise to the English one.
+const local = (path: string) => (built.has(localizePath(path, locale)) ? localizePath(path, locale) : path);
 const path = Astro.url.pathname;
-const items = [...NAV, { label: 'Search', href: '/search/' }];
+const items = [...NAV, { key: 'nav.search' as const, href: '/search/' }].map((item) => ({
+  label: t(item.key),
+  href: local(item.href),
+}));
+const languages = alternates.filter((a) => a.locale !== locale);
 ---
 
 <header class="site-header">
   <div class="container bar">
-    <a class="brand" href="/">{SITE.name}</a>
-    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
-    <nav id="site-nav" class="site-nav" aria-label="Main">
+    <a class="brand" href={local('/')}>{SITE.name}</a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">{t('nav.menu')}</button>
+    <nav id="site-nav" class="site-nav" aria-label={t('nav.main')}>
       <ul>
         {
           items.map((item) => (
             <li>
               <a href={item.href} aria-current={path.startsWith(item.href) ? 'page' : undefined}>
                 {item.label}
+              </a>
+            </li>
+          ))
+        }
+        {
+          languages.map((a) => (
+            <li>
+              <a
+                class="lang-link"
+                href={a.href}
+                hreflang={LOCALES[a.locale].htmlLang}
+                lang={LOCALES[a.locale].htmlLang}
+                aria-label={useTranslations(a.locale)('nav.thisPageIn', { language: LOCALES[a.locale].name })}
+              >
+                {LOCALES[a.locale].name}
               </a>
             </li>
           ))

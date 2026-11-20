@@ -1,0 +1,9 @@
+---
+// Translated version of src/pages/search.astro, built from the same template for each other language.
+import Page from '../search.astro';
+import { otherLocalesWhere } from '../../lib/routes';
+
+export const getStaticPaths = otherLocalesWhere();
+---
+
+<Page {...Astro.props} />

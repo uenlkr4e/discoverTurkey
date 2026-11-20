@@ -58,3 +58,7 @@ Malformed IDs fail the build. Changing any of these needs a redeploy, but no con
 - [Deployment](docs/deployment.md): Cloudflare Pages, environment variables, CMS sign-in, CI
 - [Ads, consent and analytics](docs/ads-and-consent.md): AdSense setup, consent message, GA4
 - [Maintenance](docs/maintenance.md): routine tasks, upgrades, extending the site, troubleshooting
+- [Growing traffic](docs/growth.md): Search Console, author pages, Pinterest pins, communities
+- [Content plan](docs/content-plan.md): question pages to write next
+- [Newsletter](docs/newsletter.md): connecting a newsletter provider
+- [Translations](docs/translations.md): publishing in German and other languages

@@ -1,6 +1,8 @@
 ---
 import type { ArticleEntry } from '../lib/collections';
-import { COLLECTION_LABEL, hrefFor } from '../lib/urls';
+import { toLocale } from '../i18n/locales';
+import { useTranslations } from '../i18n/ui';
+import { hrefFor } from '../lib/urls';
 import Card from './Card.astro';
 
 interface Props {
@@ -8,12 +10,13 @@ interface Props {
 }
 
 const { items } = Astro.props;
+const t = useTranslations(toLocale(Astro.currentLocale));
 ---
 
 {
   items.length > 0 && (
     <section class="section" aria-labelledby="related-heading" data-pagefind-ignore>
-      <h2 id="related-heading">Keep planning</h2>
+      <h2 id="related-heading">{t('related.heading')}</h2>
       <ul class="card-grid">
         {items.map((item) => (
           <li>
@@ -22,7 +25,7 @@ const { items } = Astro.props;
               title={item.data.title}
               summary={item.data.summary}
               image={item.data.heroImage.src}
-              eyebrow={COLLECTION_LABEL[item.collection]}
+              eyebrow={t(`type.${item.collection}`)}
             />
           </li>
         ))}

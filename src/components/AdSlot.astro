@@ -1,4 +1,6 @@
 ---
+import { toLocale } from '../i18n/locales';
+import { useTranslations } from '../i18n/ui';
 import { adSlotHtml, type Placement } from '../lib/ads';
 import { ads } from '../lib/site-env';
 
@@ -6,7 +8,8 @@ interface Props {
   placement: Placement;
 }
 
-const html = adSlotHtml(Astro.props.placement, ads);
+const t = useTranslations(toLocale(Astro.currentLocale));
+const html = adSlotHtml(Astro.props.placement, ads, t('common.advertisement'));
 ---
 
 {html && <Fragment set:html={html} />}

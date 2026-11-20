@@ -46,12 +46,12 @@ export function parseAdsConfig(env: Env): AdsConfig | null {
  * Markup for one ad placement. The <ins> only becomes an AdSense unit (class "adsbygoogle")
  * when the client loader sees it near the viewport; its size is fixed in CSS so nothing shifts.
  */
-export function adSlotHtml(placement: Placement, config: AdsConfig | null): string {
+export function adSlotHtml(placement: Placement, config: AdsConfig | null, label = 'Advertisement'): string {
   const slot = config?.slots[placement];
   if (!config || !slot) return '';
   return (
     `<div class="ad-slot ad-slot--${placement}" data-ad-placement="${placement}" data-pagefind-ignore="all">` +
-    '<p class="ad-label">Advertisement</p>' +
+    `<p class="ad-label">${label}</p>` +
     `<ins class="ad-unit" data-ad-client="${config.client}" data-ad-slot="${slot}"></ins></div>`
   );
 }

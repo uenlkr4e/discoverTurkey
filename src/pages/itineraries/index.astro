@@ -2,28 +2,29 @@
 import Card from '../../components/Card.astro';
 import PageIntro from '../../components/PageIntro.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { localizePath, toLocale } from '../../i18n/locales';
+import { useTranslations } from '../../i18n/ui';
 import { getItineraries } from '../../lib/collections';
 import { pageTitle } from '../../lib/seo';
 import { hrefFor } from '../../lib/urls';
 
-const itineraries = await getItineraries();
+const locale = toLocale(Astro.currentLocale);
+const t = useTranslations(locale);
+const itineraries = await getItineraries(locale);
 const crumbs = [
-  { name: 'Home', href: '/' },
-  { name: 'Itineraries', href: '/itineraries/' },
+  { name: t('nav.home'), href: localizePath('/', locale) },
+  { name: t('nav.itineraries'), href: localizePath('/itineraries/', locale) },
 ];
 ---
 
 <BaseLayout
-  title={pageTitle('Turkey itineraries')}
-  description="Sample itineraries for Turkey, from a classic week in Istanbul and Cappadocia to longer trips along the coast."
+  title={pageTitle(t('itineraries.title'))}
+  description={t('itineraries.description')}
   crumbs={crumbs}
   noindex={itineraries.length === 0}
 >
   <div class="container">
-    <PageIntro
-      title="Itineraries"
-      lede="Day-by-day trip plans for different trip lengths and interests. Use them as a starting point and adapt."
-    />
+    <PageIntro title={t('itineraries.heading')} lede={t('itineraries.lede')} />
     {
       itineraries.length > 0 ? (
         <ul class="card-grid">
@@ -34,13 +35,13 @@ const crumbs = [
                 title={it.data.title}
                 summary={it.data.summary}
                 image={it.data.heroImage.src}
-                eyebrow={`${it.data.days} days`}
+                eyebrow={t.plural('common.days', it.data.days)}
               />
             </li>
           ))}
         </ul>
       ) : (
-        <p>Our first itineraries are being reviewed and will appear here soon.</p>
+        <p>{t('itineraries.empty')}</p>
       )
     }
   </div>

@@ -3,17 +3,14 @@ import type { CollectionEntry } from 'astro:content';
 import Card from '../../../components/Card.astro';
 import PageIntro from '../../../components/PageIntro.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { getGuideCategoriesWithContent, getGuides, type Guide } from '../../../lib/collections';
+import { localizePath, toLocale } from '../../../i18n/locales';
+import { useTranslations } from '../../../i18n/ui';
+import { taxonomyText, type Guide } from '../../../lib/collections';
+import { guideCategoryPaths } from '../../../lib/routes';
 import { pageTitle } from '../../../lib/seo';
 import { guideCategoryHref, hrefFor } from '../../../lib/urls';
 
-export async function getStaticPaths() {
-  const [categories, guides] = await Promise.all([getGuideCategoriesWithContent(), getGuides()]);
-  return categories.map((category) => ({
-    params: { category: category.id },
-    props: { category, guides: guides.filter((g) => g.data.category.id === category.id) },
-  }));
-}
+export const getStaticPaths = () => guideCategoryPaths();
 
 interface Props {
   category: CollectionEntry<'guideCategories'>;
@@ -21,20 +18,20 @@ interface Props {
 }
 
 const { category, guides } = Astro.props;
+const locale = toLocale(Astro.currentLocale);
+const t = useTranslations(locale);
+const { name, description } = taxonomyText(category, locale);
+const title = t('guides.categoryTitle', { category: name });
 const crumbs = [
-  { name: 'Home', href: '/' },
-  { name: 'Travel tips', href: '/guides/' },
-  { name: category.data.name, href: guideCategoryHref(category.id) },
+  { name: t('nav.home'), href: localizePath('/', locale) },
+  { name: t('nav.guides'), href: localizePath('/guides/', locale) },
+  { name, href: guideCategoryHref(category.id, locale) },
 ];
 ---
 
-<BaseLayout
-  title={pageTitle(`${category.data.name} tips for Turkey`)}
-  description={category.data.description}
-  crumbs={crumbs}
->
+<BaseLayout title={pageTitle(title)} description={description} crumbs={crumbs}>
   <div class="container">
-    <PageIntro title={`${category.data.name} tips for Turkey`} lede={category.data.description} />
+    <PageIntro title={title} lede={description} />
     <ul class="card-grid">
       {
         guides.map((g) => (

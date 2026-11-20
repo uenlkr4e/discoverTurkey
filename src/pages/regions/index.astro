@@ -1,37 +1,39 @@
 ---
 import PageIntro from '../../components/PageIntro.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getDestinations, getRegionsWithContent } from '../../lib/collections';
+import { localizePath, toLocale } from '../../i18n/locales';
+import { useTranslations } from '../../i18n/ui';
+import { getDestinations, getRegionsWithContent, taxonomyText } from '../../lib/collections';
 import { pageTitle } from '../../lib/seo';
 import { regionHref } from '../../lib/urls';
 
-const [regions, destinations] = await Promise.all([getRegionsWithContent(), getDestinations()]);
+const locale = toLocale(Astro.currentLocale);
+const t = useTranslations(locale);
+const [regions, destinations] = await Promise.all([getRegionsWithContent(locale), getDestinations(locale)]);
 const countIn = (id: string) => destinations.filter((d) => d.data.region.id === id).length;
 const crumbs = [
-  { name: 'Home', href: '/' },
-  { name: 'Regions', href: '/regions/' },
+  { name: t('nav.home'), href: localizePath('/', locale) },
+  { name: t('regions.title'), href: localizePath('/regions/', locale) },
 ];
 ---
 
 <BaseLayout
-  title={pageTitle('Regions of Turkey')}
-  description="Explore Turkey region by region, from Istanbul and the Marmara to the Aegean, the Mediterranean and Central Anatolia."
+  title={pageTitle(t('regions.title'))}
+  description={t('regions.description')}
   crumbs={crumbs}
   noindex={regions.length === 0}
 >
   <div class="container">
-    <PageIntro title="Regions of Turkey" lede="Turkey is traditionally divided into seven geographical regions." />
+    <PageIntro title={t('regions.title')} lede={t('regions.lede')} />
     <ul class="regions">
       {
         regions.map((r) => (
           <li>
             <h2>
-              <a href={regionHref(r.id)}>{r.data.name}</a>
+              <a href={regionHref(r.id, locale)}>{taxonomyText(r, locale).name}</a>
             </h2>
-            <p>{r.data.description}</p>
-            <p class="eyebrow">
-              {countIn(r.id)} destination{countIn(r.id) === 1 ? '' : 's'}
-            </p>
+            <p>{taxonomyText(r, locale).description}</p>
+            <p class="eyebrow">{t.plural('regions.count', countIn(r.id))}</p>
           </li>
         ))
       }

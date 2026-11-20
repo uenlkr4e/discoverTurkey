@@ -3,33 +3,14 @@ import type { CollectionEntry } from 'astro:content';
 import Card from '../../components/Card.astro';
 import PageIntro from '../../components/PageIntro.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import {
-  getDestinations,
-  getInterestsWithContent,
-  getItineraries,
-  type Destination,
-  type Itinerary,
-} from '../../lib/collections';
+import { localizePath, toLocale } from '../../i18n/locales';
+import { useTranslations } from '../../i18n/ui';
+import { taxonomyText, type Destination, type Itinerary } from '../../lib/collections';
+import { interestPaths } from '../../lib/routes';
 import { pageTitle } from '../../lib/seo';
 import { hrefFor, interestHref } from '../../lib/urls';
 
-export async function getStaticPaths() {
-  const [interests, destinations, itineraries] = await Promise.all([
-    getInterestsWithContent(),
-    getDestinations(),
-    getItineraries(),
-  ]);
-  const tagged = <T extends Destination | Itinerary>(list: T[], id: string) =>
-    list.filter((e) => e.data.interests.some((i) => i.id === id));
-  return interests.map((interest) => ({
-    params: { interest: interest.id },
-    props: {
-      interest,
-      destinations: tagged(destinations, interest.id),
-      itineraries: tagged(itineraries, interest.id),
-    },
-  }));
-}
+export const getStaticPaths = () => interestPaths();
 
 interface Props {
   interest: CollectionEntry<'interests'>;
@@ -38,22 +19,25 @@ interface Props {
 }
 
 const { interest, destinations, itineraries } = Astro.props;
-const title = `${interest.data.name} in Turkey`;
+const locale = toLocale(Astro.currentLocale);
+const t = useTranslations(locale);
+const { name, description } = taxonomyText(interest, locale);
+const title = t('interest.title', { interest: name });
 const crumbs = [
-  { name: 'Home', href: '/' },
-  { name: 'Experiences', href: '/interests/' },
-  { name: interest.data.name, href: interestHref(interest.id) },
+  { name: t('nav.home'), href: localizePath('/', locale) },
+  { name: t('nav.interests'), href: localizePath('/interests/', locale) },
+  { name, href: interestHref(interest.id, locale) },
 ];
 ---
 
-<BaseLayout title={pageTitle(title)} description={interest.data.description} crumbs={crumbs}>
+<BaseLayout title={pageTitle(title)} description={description} crumbs={crumbs}>
   <div class="container">
-    <PageIntro title={title} lede={interest.data.description} />
+    <PageIntro title={title} lede={description} />
 
     {
       destinations.length > 0 && (
         <section class="section" aria-labelledby="destinations">
-          <h2 id="destinations">Destinations</h2>
+          <h2 id="destinations">{t('common.destinations')}</h2>
           <ul class="card-grid">
             {destinations.map((d) => (
               <li>
@@ -68,7 +52,7 @@ const crumbs = [
     {
       itineraries.length > 0 && (
         <section class="section" aria-labelledby="itineraries">
-          <h2 id="itineraries">Itineraries</h2>
+          <h2 id="itineraries">{t('common.itineraries')}</h2>
           <ul class="card-grid">
             {itineraries.map((it) => (
               <li>
@@ -77,7 +61,7 @@ const crumbs = [
                   title={it.data.title}
                   summary={it.data.summary}
                   image={it.data.heroImage.src}
-                  eyebrow={`${it.data.days} days`}
+                  eyebrow={t.plural('common.days', it.data.days)}
                 />
               </li>
             ))}

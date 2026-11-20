@@ -1,47 +1,64 @@
 ---
 import PageIntro from '../components/PageIntro.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { localizePath, toLocale } from '../i18n/locales';
+import { useTranslations } from '../i18n/ui';
 import { pageTitle } from '../lib/seo';
 
+const locale = toLocale(Astro.currentLocale);
+const t = useTranslations(locale);
+const local = (path: string) => localizePath(path, locale);
 const crumbs = [
-  { name: 'Home', href: '/' },
-  { name: 'Search', href: '/search/' },
+  { name: t('nav.home'), href: local('/') },
+  { name: t('search.title'), href: local('/search/') },
 ];
+// Client-side messages; {count} and {term} are filled in by the script.
+const messages = {
+  searching: t('search.searching'),
+  one: t('search.results.one'),
+  other: t('search.results.other'),
+  unavailable: t('search.unavailable'),
+  pluralLocale: locale,
+};
 ---
 
-<BaseLayout
-  title={pageTitle('Search')}
-  description="Search Discover Turkey destination guides, travel tips and itineraries."
-  crumbs={crumbs}
-  noindex
->
+<BaseLayout title={pageTitle(t('search.title'))} description={t('search.description')} crumbs={crumbs} noindex>
   <div class="container">
-    <PageIntro title="Search" />
-    <form id="search-form" class="search-form" role="search" action="/search/" method="get">
+    <PageIntro title={t('search.title')} />
+    <form
+      id="search-form"
+      class="search-form"
+      role="search"
+      action={local('/search/')}
+      method="get"
+      data-messages={JSON.stringify(messages)}
+    >
       <div class="field grow">
-        <label for="q">Search destinations and guides</label>
+        <label for="q">{t('search.label')}</label>
         <input id="q" name="q" type="search" autocomplete="off" />
       </div>
       <div class="field">
-        <label for="type">Show</label>
+        <label for="type">{t('search.show')}</label>
         <select id="type" name="type">
-          <option value="">Everything</option>
-          <option value="Destination">Destinations</option>
-          <option value="Guide">Travel tips</option>
-          <option value="Itinerary">Itineraries</option>
+          <option value="">{t('search.everything')}</option>
+          <!-- Values match the type filter each article sets in its own language (ArticleLayout). -->
+          <option value={t('type.destinations')}>{t('nav.destinations')}</option>
+          <option value={t('type.guides')}>{t('nav.guides')}</option>
+          <option value={t('type.itineraries')}>{t('nav.itineraries')}</option>
         </select>
       </div>
-      <button class="button" type="submit">Search</button>
+      <button class="button" type="submit">{t('search.submit')}</button>
     </form>
 
     <p id="search-status" class="status" role="status" aria-live="polite"></p>
     <ol id="search-results" class="results"></ol>
 
     <noscript>
-      <p>
-        Search needs JavaScript. You can <a href="/destinations/">browse destinations</a> or
-        <a href="/guides/">travel tips</a> instead.
-      </p>
+      <p>{t('search.noscript')}</p>
+      <ul class="chip-list">
+        <li><a href={local('/destinations/')}>{t('nav.destinations')}</a></li>
+        <li><a href={local('/guides/')}>{t('nav.guides')}</a></li>
+      </ul>
     </noscript>
   </div>
 </BaseLayout>
@@ -65,6 +82,16 @@ const crumbs = [
   const type = document.getElementById('type') as HTMLSelectElement;
   const status = document.getElementById('search-status') as HTMLElement;
   const list = document.getElementById('search-results') as HTMLOListElement;
+  const messages = JSON.parse(form.dataset.messages ?? '{}') as {
+    searching: string;
+    one: string;
+    other: string;
+    unavailable: string;
+    pluralLocale: string;
+  };
+  const plural = new Intl.PluralRules(messages.pluralLocale);
+  const fill = (text: string, vars: Record<string, string | number>) =>
+    text.replace(/\{(\w+)\}/g, (match, name: string) => String(vars[name] ?? match));
 
   let pagefind: Promise<Pagefind> | undefined;
   // The index is generated after `astro build`, so it is loaded at runtime rather than bundled.
@@ -112,17 +139,17 @@ const crumbs = [
       status.textContent = '';
       return;
     }
-    status.textContent = 'Searching…';
+    status.textContent = messages.searching;
     try {
       const search = await (await loadPagefind()).search(term, filter ? { filters: { type: filter } } : undefined);
       const items = await Promise.all(search.results.slice(0, MAX_RESULTS).map((r) => r.data()));
       list.replaceChildren(...items.map(renderResult));
       const count = search.results.length;
-      status.textContent = `${count} result${count === 1 ? '' : 's'} for “${term}”`;
+      status.textContent = fill(plural.select(count) === 'one' ? messages.one : messages.other, { count, term });
       document.dispatchEvent(new CustomEvent('site:search', { detail: { term, count } }));
     } catch (error) {
       console.error('Search failed', error);
-      status.textContent = 'Search is unavailable right now. Try browsing destinations instead.';
+      status.textContent = messages.unavailable;
     }
   }
 

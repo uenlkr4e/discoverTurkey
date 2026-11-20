@@ -7,7 +7,9 @@ import Breadcrumbs from '../components/Breadcrumbs.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { SITE } from '../config/site';
-import { showDrafts } from '../lib/collections';
+import { DEFAULT_LOCALE, delocalizePath, LOCALE_CODES, LOCALES, localizePath, toLocale } from '../i18n/locales';
+import { useTranslations } from '../i18n/ui';
+import { getBuiltPaths, showDrafts } from '../lib/collections';
 import { assertContentValid } from '../lib/content-checks';
 import { absoluteUrl, breadcrumbLd, jsonLdScript, type Crumb } from '../lib/seo';
 import { ads, consentDefaultArgs, gaId, verification } from '../lib/site-env';
@@ -35,10 +37,20 @@ const og = image ? await getImage({ src: image, width: 1200, height: 630, fit: '
 const ogImage = og ? absoluteUrl(og.src, site) : undefined;
 const structured = crumbs.length > 1 ? [...jsonLd, breadcrumbLd(crumbs, site)] : jsonLd;
 const robots = noindex || showDrafts ? 'noindex, nofollow' : 'index, follow, max-image-preview:large';
+const locale = toLocale(Astro.currentLocale);
+const t = useTranslations(locale);
+// Versions of this page in each language that has one; hreflang needs at least two.
+const built = await getBuiltPaths();
+const basePath = delocalizePath(Astro.url.pathname).path;
+const versions = LOCALE_CODES.map((l) => ({ locale: l, href: localizePath(basePath, l) })).filter((v) =>
+  built.has(v.href),
+);
+const alternates = !noindex && versions.length > 1 ? versions : [];
+const xDefault = alternates.find((a) => a.locale === DEFAULT_LOCALE);
 ---
 
 <!doctype html>
-<html lang="en" data-ads-npa={ads ? String(ads.nonPersonalized) : undefined}>
+<html lang={LOCALES[locale].htmlLang} data-ads-npa={ads ? String(ads.nonPersonalized) : undefined}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -66,6 +78,12 @@ const robots = noindex || showDrafts ? 'noindex, nofollow' : 'index, follow, max
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {
+      alternates.map((a) => (
+        <link rel="alternate" hreflang={LOCALES[a.locale].htmlLang} href={absoluteUrl(a.href, site)} />
+      ))
+    }
+    {xDefault && <link rel="alternate" hreflang="x-default" href={absoluteUrl(xDefault.href, site)} />}
     <meta name="robots" content={robots} />
     {verification.google && <meta name="google-site-verification" content={verification.google} />}
     {verification.pinterest && <meta name="p:domain_verify" content={verification.pinterest} />}
@@ -74,6 +92,12 @@ const robots = noindex || showDrafts ? 'noindex, nofollow' : 'index, follow, max
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={LOCALES[locale].ogLocale} />
+    {
+      alternates
+        .filter((a) => a.locale !== locale)
+        .map((a) => <meta property="og:locale:alternate" content={LOCALES[a.locale].ogLocale} />)
+    }
     {
       ogImage && (
         <>
@@ -93,8 +117,8 @@ const robots = noindex || showDrafts ? 'noindex, nofollow' : 'index, follow, max
     <slot name="head" />
   </head>
   <body>
-    <a class="skip-link" href="#main">Skip to content</a>
-    <Header />
+    <a class="skip-link" href="#main">{t('nav.skip')}</a>
+    <Header alternates={alternates} />
     <slot name="banner" />
     {crumbs.length > 1 && <Breadcrumbs crumbs={crumbs} />}
     <main id="main" tabindex="-1">
@@ -105,7 +129,7 @@ const robots = noindex || showDrafts ? 'noindex, nofollow' : 'index, follow, max
         ads && (
           <li>
             <button type="button" class="privacy-settings" data-privacy-settings hidden>
-              Privacy settings
+              {t('footer.privacySettings')}
             </button>
           </li>
         )

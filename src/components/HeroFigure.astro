@@ -1,5 +1,7 @@
 ---
 import { Image } from 'astro:assets';
+import { toLocale } from '../i18n/locales';
+import { useTranslations } from '../i18n/ui';
 import type { HeroImage } from '../lib/collections';
 
 interface Props {
@@ -10,6 +12,7 @@ interface Props {
 }
 
 const { image, pinMedia, pinDescription } = Astro.props;
+const t = useTranslations(toLocale(Astro.currentLocale));
 ---
 
 <figure class="hero">
@@ -24,7 +27,7 @@ const { image, pinMedia, pinDescription } = Astro.props;
     data-pin-description={pinMedia ? pinDescription : undefined}
   />
   <figcaption>
-    Photo: <a href={image.credit.sourceUrl} rel="noopener">{image.credit.author}</a>, {image.credit.license}
+    {t('common.photo')} <a href={image.credit.sourceUrl} rel="noopener">{image.credit.author}</a>, {image.credit.license}
   </figcaption>
 </figure>
 

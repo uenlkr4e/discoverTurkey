@@ -2,14 +2,14 @@
 import { render } from 'astro:content';
 import FactBox from '../../components/FactBox.astro';
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
-import { getDestinations, getItineraries, resolve, type Itinerary } from '../../lib/collections';
+import { idIn, localeOf, localizePath } from '../../i18n/locales';
+import { useTranslations } from '../../i18n/ui';
+import { getDestinations, resolve, taxonomyText, type Itinerary } from '../../lib/collections';
 import { renderMarkdown } from '../../lib/markdown';
+import { itineraryPaths } from '../../lib/routes';
 import { hrefFor, interestHref } from '../../lib/urls';
 
-export async function getStaticPaths() {
-  const itineraries = await getItineraries();
-  return itineraries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
-}
+export const getStaticPaths = () => itineraryPaths();
 
 interface Props {
   entry: Itinerary;
@@ -18,31 +18,33 @@ interface Props {
 const { entry } = Astro.props;
 const d = entry.data;
 const { Content } = await render(entry);
-const [interests, visible] = await Promise.all([Promise.all(d.interests.map(resolve)), getDestinations()]);
-// Only link stops to destinations that are actually built.
+const locale = localeOf(entry.id);
+const t = useTranslations(locale);
+const [interestEntries, visible] = await Promise.all([Promise.all(d.interests.map(resolve)), getDestinations(locale)]);
+const interests = interestEntries.map((i) => ({ id: i.id, name: taxonomyText(i, locale).name }));
+// Only link stops to destinations that are actually built, in this itinerary's language.
 const visibleById = new Map(visible.map((dest) => [dest.id, dest]));
 const stops = [...d.stops].sort((a, b) => a.day - b.day).map((stop) => ({
   ...stop,
-  destination: visibleById.get(stop.destination.id),
+  destination: visibleById.get(idIn(stop.destination.id, locale)),
 }));
-
 const crumbs = [
-  { name: 'Home', href: '/' },
-  { name: 'Itineraries', href: '/itineraries/' },
+  { name: t('nav.home'), href: localizePath('/', locale) },
+  { name: t('nav.itineraries'), href: localizePath('/itineraries/', locale) },
   { name: d.title, href: Astro.url.pathname },
 ];
 ---
 
 <ArticleLayout
   entry={entry}
-  eyebrow={`${d.days}-day itinerary`}
+  eyebrow={t('itinerary.eyebrow', { count: d.days })}
   crumbs={crumbs}
-  filters={{ interest: interests.map((i) => i.data.name) }}
+  filters={{ interest: interests.map((i) => i.name) }}
 >
   <FactBox
     facts={[
-      { label: 'Trip length', value: `${d.days} days` },
-      { label: 'Good for', value: interests.map((i) => i.data.name).join(', ') },
+      { label: t('itinerary.length'), value: t.plural('common.days', d.days) },
+      { label: t('common.goodFor'), value: interests.map((i) => i.name).join(', ') },
     ]}
   />
 
@@ -51,18 +53,16 @@ const crumbs = [
   </div>
 
   <section aria-labelledby="day-by-day">
-    <h2 id="day-by-day">Day by day</h2>
+    <h2 id="day-by-day">{t('itinerary.dayByDay')}</h2>
     <ol class="stops">
       {
         stops.map((stop) => (
           <li>
-            <h3>
-              Day {stop.day}: {stop.title}
-            </h3>
+            <h3>{t('itinerary.day', { day: stop.day, title: stop.title })}</h3>
             <div class="prose" set:html={renderMarkdown(stop.plan)} />
             {stop.destination && (
               <p>
-                <a href={hrefFor(stop.destination)}>Read our {stop.destination.data.title} guide</a>
+                <a href={hrefFor(stop.destination)}>{t('itinerary.readGuide', { title: stop.destination.data.title })}</a>
               </p>
             )}
           </li>
@@ -72,9 +72,9 @@ const crumbs = [
   </section>
 
   <section aria-labelledby="good-for">
-    <h2 id="good-for">Good for</h2>
+    <h2 id="good-for">{t('common.goodFor')}</h2>
     <ul class="chip-list">
-      {interests.map((i) => <li><a href={interestHref(i.id)}>{i.data.name}</a></li>)}
+      {interests.map((i) => <li><a href={interestHref(i.id, locale)}>{i.name}</a></li>)}
     </ul>
   </section>
 </ArticleLayout>

@@ -2,34 +2,35 @@
 import Card from '../../components/Card.astro';
 import PageIntro from '../../components/PageIntro.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getGuideCategoriesWithContent, getGuides } from '../../lib/collections';
+import { localizePath, toLocale } from '../../i18n/locales';
+import { useTranslations } from '../../i18n/ui';
+import { getGuideCategoriesWithContent, getGuides, taxonomyText } from '../../lib/collections';
 import { pageTitle } from '../../lib/seo';
 import { guideCategoryHref, hrefFor } from '../../lib/urls';
 
-const [categories, guides] = await Promise.all([getGuideCategoriesWithContent(), getGuides()]);
+const locale = toLocale(Astro.currentLocale);
+const t = useTranslations(locale);
+const [categories, guides] = await Promise.all([getGuideCategoriesWithContent(locale), getGuides(locale)]);
 const crumbs = [
-  { name: 'Home', href: '/' },
-  { name: 'Travel tips', href: '/guides/' },
+  { name: t('nav.home'), href: localizePath('/', locale) },
+  { name: t('nav.guides'), href: localizePath('/guides/', locale) },
 ];
 ---
 
 <BaseLayout
-  title={pageTitle('Turkey travel tips and planning guides')}
-  description="Practical guides to planning a trip to Turkey: transport, money, mobile data, etiquette, safety and when to go."
+  title={pageTitle(t('guides.title'))}
+  description={t('guides.description')}
   crumbs={crumbs}
   noindex={categories.length === 0}
 >
   <div class="container">
-    <PageIntro
-      title="Travel tips"
-      lede="Practical advice for planning your trip, checked against official sources by our editors."
-    />
-    {categories.length === 0 && <p>Our planning guides are being reviewed and will appear here soon.</p>}
+    <PageIntro title={t('guides.heading')} lede={t('guides.lede')} />
+    {categories.length === 0 && <p>{t('guides.empty')}</p>}
     {
       categories.map((category) => (
         <section class="section" aria-labelledby={`cat-${category.id}`}>
           <h2 id={`cat-${category.id}`}>
-            <a href={guideCategoryHref(category.id)}>{category.data.name}</a>
+            <a href={guideCategoryHref(category.id, locale)}>{taxonomyText(category, locale).name}</a>
           </h2>
           <ul class="card-grid">
             {guides

@@ -1,5 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { toLocale } from '../i18n/locales';
+import { taxonomyText } from '../lib/collections';
 import { interestHref } from '../lib/urls';
 
 interface Props {
@@ -9,6 +11,7 @@ interface Props {
 
 const { interests, headingLevel = 3 } = Astro.props;
 const Heading = `h${headingLevel}` as 'h2' | 'h3';
+const locale = toLocale(Astro.currentLocale);
 ---
 
 <ul class="tiles">
@@ -16,9 +19,9 @@ const Heading = `h${headingLevel}` as 'h2' | 'h3';
     interests.map((interest) => (
       <li>
         <Heading class="tile-title">
-          <a href={interestHref(interest.id)}>{interest.data.name}</a>
+          <a href={interestHref(interest.id, locale)}>{taxonomyText(interest, locale).name}</a>
         </Heading>
-        <p>{interest.data.description}</p>
+        <p>{taxonomyText(interest, locale).description}</p>
       </li>
     ))
   }

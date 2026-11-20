@@ -1,0 +1,10 @@
+---
+// Translated version of src/pages/itineraries/[slug].astro, built from the same template for each other language.
+import type { ComponentProps } from 'astro/types';
+import Page from '../../itineraries/[slug].astro';
+import { inOtherLocales, itineraryPaths } from '../../../lib/routes';
+
+export const getStaticPaths = () => inOtherLocales(itineraryPaths);
+---
+
+<Page {...(Astro.props as ComponentProps<typeof Page>)} />

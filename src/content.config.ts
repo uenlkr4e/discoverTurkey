@@ -1,6 +1,7 @@
 import { defineCollection, reference, type SchemaContext } from 'astro:content';
 import { file, glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { LOCALE_CODES, type Locale } from './i18n/locales';
 import { SEASONS } from './lib/season';
 
 // Tests point this at generated fixtures; editors always work in src/content.
@@ -142,7 +143,11 @@ const authors = defineCollection({
     }),
 });
 
-const taxonomy = z.object({ name: z.string().trim().min(1), description: z.string().trim().min(50).max(160) });
+const taxonomyText = z.object({ name: z.string().trim().min(1), description: z.string().trim().min(50).max(160) });
+const taxonomy = taxonomyText.extend({
+  // Name and description in other languages, e.g. translations: { de: { name: …, description: … } }.
+  translations: z.partialRecord(z.enum(LOCALE_CODES as [Locale, ...Locale[]]), taxonomyText).optional(),
+});
 const regions = defineCollection({ loader: file('src/data/regions.yaml'), schema: taxonomy });
 const interests = defineCollection({ loader: file('src/data/interests.yaml'), schema: taxonomy });
 const guideCategories = defineCollection({ loader: file('src/data/guide-categories.yaml'), schema: taxonomy });

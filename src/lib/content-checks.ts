@@ -1,4 +1,5 @@
 import { getCollection } from 'astro:content';
+import { idIn, localeOf } from '../i18n/locales';
 import { manualRelatedKeys, type ArticleEntry } from './collections';
 import { wordCount } from './content';
 import { entryKey } from './urls';
@@ -26,7 +27,11 @@ function textOf(e: ArticleEntry): string {
 }
 
 function linksOf(e: ArticleEntry): string[] {
-  const stops = e.collection === 'itineraries' ? e.data.stops.map((s) => entryKey(s.destination)) : [];
+  const locale = localeOf(e.id);
+  const stops =
+    e.collection === 'itineraries'
+      ? e.data.stops.map((s) => entryKey({ collection: 'destinations', id: idIn(s.destination.id, locale) }))
+      : [];
   return [...new Set([...manualRelatedKeys(e), ...stops])];
 }
 
@@ -43,6 +48,7 @@ async function run(): Promise<void> {
   const entries: CheckEntry[] = [...d, ...g, ...i].map((e) => ({
     key: entryKey(e),
     collection: e.collection,
+    locale: localeOf(e.id),
     title: e.data.title,
     seoTitle: e.data.seoTitle,
     description: e.data.seoDescription ?? e.data.summary,
@@ -56,6 +62,7 @@ async function run(): Promise<void> {
     entries.push({
       key: entryKey(p),
       collection: p.collection,
+      locale: localeOf(p.id),
       title: p.data.title,
       description: p.data.summary,
       status: p.data.status,

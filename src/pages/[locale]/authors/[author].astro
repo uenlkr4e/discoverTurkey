@@ -1,0 +1,10 @@
+---
+// Translated version of src/pages/authors/[author].astro, built from the same template for each other language.
+import type { ComponentProps } from 'astro/types';
+import Page from '../../authors/[author].astro';
+import { authorPaths, inOtherLocales } from '../../../lib/routes';
+
+export const getStaticPaths = () => inOtherLocales(authorPaths);
+---
+
+<Page {...(Astro.props as ComponentProps<typeof Page>)} />

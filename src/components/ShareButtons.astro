@@ -1,4 +1,7 @@
 ---
+import { toLocale } from '../i18n/locales';
+import { useTranslations } from '../i18n/ui';
+
 interface Props {
   title: string;
   url: string;
@@ -8,6 +11,7 @@ interface Props {
 }
 
 const { title, url, contentType, pinMedia } = Astro.props;
+const t = useTranslations(toLocale(Astro.currentLocale));
 const text = encodeURIComponent(title);
 const link = encodeURIComponent(url);
 const networks = [
@@ -26,17 +30,27 @@ const networks = [
 ];
 ---
 
-<section class="share" aria-labelledby="share-heading" data-share data-title={title} data-url={url} data-content-type={contentType} data-pagefind-ignore>
-  <h2 id="share-heading" class="share-heading">Share this page</h2>
+<section
+  class="share"
+  aria-labelledby="share-heading"
+  data-share
+  data-title={title}
+  data-url={url}
+  data-content-type={contentType}
+  data-copied={t('share.copied')}
+  data-copy-failed={t('share.copyFailed')}
+  data-pagefind-ignore
+>
+  <h2 id="share-heading" class="share-heading">{t('share.heading')}</h2>
   <ul class="chip-list">
-    <li><button type="button" class="chip" data-share-native hidden>Share…</button></li>
-    <li><button type="button" class="chip" data-share-copy>Copy link</button></li>
+    <li><button type="button" class="chip" data-share-native hidden>{t('share.native')}</button></li>
+    <li><button type="button" class="chip" data-share-copy>{t('share.copy')}</button></li>
     {
       networks.map((n) => (
         <li>
           <a href={n.href} target="_blank" rel="noopener" data-share-method={n.method}>
             {n.label}
-            <span class="visually-hidden"> (opens in a new tab)</span>
+            <span class="visually-hidden">{t('common.newTab')}</span>
           </a>
         </li>
       ))

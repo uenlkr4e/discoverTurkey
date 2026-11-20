@@ -1,17 +1,22 @@
 ---
+import { localizePath, toLocale } from '../i18n/locales';
+import { useTranslations } from '../i18n/ui';
+
 interface Props {
   id: string;
   label?: string;
 }
 
-const { id, label = 'Search destinations and guides' } = Astro.props;
+const locale = toLocale(Astro.currentLocale);
+const t = useTranslations(locale);
+const { id, label = t('search.label') } = Astro.props;
 ---
 
-<form class="search-box" role="search" action="/search/" method="get">
+<form class="search-box" role="search" action={localizePath('/search/', locale)} method="get">
   <label for={id}>{label}</label>
   <div class="row">
     <input id={id} name="q" type="search" autocomplete="off" required />
-    <button class="button" type="submit">Search</button>
+    <button class="button" type="submit">{t('search.submit')}</button>
   </div>
 </form>
 

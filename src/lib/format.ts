@@ -1,5 +1,7 @@
-const longDate = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+import { DEFAULT_LOCALE, LOCALES, type Locale } from '../i18n/locales';
 
-export const formatDate = (d: Date): string => longDate.format(d);
+const longDate = (locale: Locale) =>
+  new Intl.DateTimeFormat(LOCALES[locale].dateLocale, { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+
+export const formatDate = (d: Date, locale: Locale = DEFAULT_LOCALE): string => longDate(locale).format(d);
 export const isoDate = (d: Date): string => d.toISOString().slice(0, 10);
-export const capitalize = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1);

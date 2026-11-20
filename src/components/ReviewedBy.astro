@@ -1,4 +1,6 @@
 ---
+import { toLocale } from '../i18n/locales';
+import { useTranslations } from '../i18n/ui';
 import { formatDate, isoDate } from '../lib/format';
 
 interface Props {
@@ -10,18 +12,21 @@ interface Props {
 }
 
 const { authorName, authorHref, reviewedBy, reviewedAt } = Astro.props;
+const locale = toLocale(Astro.currentLocale);
+const t = useTranslations(locale);
 ---
 
 <p class="byline">
-  <span>By {authorHref ? <a href={authorHref} rel="author">{authorName}</a> : authorName}</span>
+  <span>{t('byline.by')} {authorHref ? <a href={authorHref} rel="author">{authorName}</a> : authorName}</span>
   <span aria-hidden="true">·</span>
   {
     reviewedBy && reviewedAt ? (
       <span>
-        Last reviewed <time datetime={isoDate(reviewedAt)}>{formatDate(reviewedAt)}</time> by {reviewedBy}
+        {t('byline.reviewed')} <time datetime={isoDate(reviewedAt)}>{formatDate(reviewedAt, locale)}</time>{' '}
+        {t('byline.reviewedBy')} {reviewedBy}
       </span>
     ) : (
-      <span>Not yet reviewed</span>
+      <span>{t('byline.notReviewed')}</span>
     )
   }
 </p>

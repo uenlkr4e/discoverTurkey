@@ -3,26 +3,14 @@ import type { CollectionEntry } from 'astro:content';
 import Card from '../../components/Card.astro';
 import PageIntro from '../../components/PageIntro.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import {
-  getDestinations,
-  getItinerariesThrough,
-  getRegionsWithContent,
-  type Destination,
-  type Itinerary,
-} from '../../lib/collections';
+import { localizePath, toLocale } from '../../i18n/locales';
+import { useTranslations } from '../../i18n/ui';
+import { taxonomyText, type Destination, type Itinerary } from '../../lib/collections';
+import { regionPaths } from '../../lib/routes';
 import { pageTitle } from '../../lib/seo';
 import { hrefFor, regionHref } from '../../lib/urls';
 
-export async function getStaticPaths() {
-  const [regions, destinations] = await Promise.all([getRegionsWithContent(), getDestinations()]);
-  return Promise.all(
-    regions.map(async (region) => {
-      const inRegion = destinations.filter((d) => d.data.region.id === region.id);
-      const itineraries = await getItinerariesThrough(new Set(inRegion.map((d) => d.id)));
-      return { params: { region: region.id }, props: { region, destinations: inRegion, itineraries } };
-    }),
-  );
-}
+export const getStaticPaths = () => regionPaths();
 
 interface Props {
   region: CollectionEntry<'regions'>;
@@ -31,20 +19,22 @@ interface Props {
 }
 
 const { region, destinations, itineraries } = Astro.props;
-const title = `${region.data.name} region`;
+const locale = toLocale(Astro.currentLocale);
+const t = useTranslations(locale);
+const { name, description } = taxonomyText(region, locale);
+const title = t('region.title', { region: name });
 const crumbs = [
-  { name: 'Home', href: '/' },
-  { name: 'Regions', href: '/regions/' },
-  { name: region.data.name, href: regionHref(region.id) },
+  { name: t('nav.home'), href: localizePath('/', locale) },
+  { name: t('regions.title'), href: localizePath('/regions/', locale) },
+  { name, href: regionHref(region.id, locale) },
 ];
 ---
 
-<BaseLayout title={pageTitle(`Visiting the ${title} of Turkey`)} description={region.data.description} crumbs={crumbs}>
+<BaseLayout title={pageTitle(t('region.pageTitle', { region: name }))} description={description} crumbs={crumbs}>
   <div class="container">
-    <PageIntro title={title} lede={region.data.description} />
-
+    <PageIntro title={title} lede={description} />
     <section class="section" aria-labelledby="destinations">
-      <h2 id="destinations">Destinations</h2>
+      <h2 id="destinations">{t('common.destinations')}</h2>
       <ul class="card-grid">
         {
           destinations.map((d) => (
@@ -59,7 +49,7 @@ const crumbs = [
     {
       itineraries.length > 0 && (
         <section class="section" aria-labelledby="itineraries">
-          <h2 id="itineraries">Itineraries through the region</h2>
+          <h2 id="itineraries">{t('region.itineraries')}</h2>
           <ul class="card-grid">
             {itineraries.map((it) => (
               <li>
@@ -68,7 +58,7 @@ const crumbs = [
                   title={it.data.title}
                   summary={it.data.summary}
                   image={it.data.heroImage.src}
-                  eyebrow={`${it.data.days} days`}
+                  eyebrow={t.plural('common.days', it.data.days)}
                 />
               </li>
             ))}

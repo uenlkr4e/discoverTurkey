@@ -1,0 +1,9 @@
+---
+// Translated version of src/pages/destinations/index.astro, built from the same template for each other language.
+import Page from '../../destinations/index.astro';
+import { listingIn } from '../../../lib/routes';
+
+export const getStaticPaths = listingIn('/destinations/');
+---
+
+<Page {...Astro.props} />

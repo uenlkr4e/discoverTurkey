@@ -1,16 +1,13 @@
 ---
 import { render } from 'astro:content';
 import ArticleLayout from '../../../layouts/ArticleLayout.astro';
-import { getGuides, resolve, type Guide } from '../../../lib/collections';
+import { localeOf, localizePath } from '../../../i18n/locales';
+import { useTranslations } from '../../../i18n/ui';
+import { resolve, taxonomyText, type Guide } from '../../../lib/collections';
+import { guidePaths } from '../../../lib/routes';
 import { guideCategoryHref } from '../../../lib/urls';
 
-export async function getStaticPaths() {
-  const guides = await getGuides();
-  return guides.map((entry) => ({
-    params: { category: entry.data.category.id, slug: entry.id },
-    props: { entry },
-  }));
-}
+export const getStaticPaths = () => guidePaths();
 
 interface Props {
   entry: Guide;
@@ -18,25 +15,25 @@ interface Props {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
-const category = await resolve(entry.data.category);
+const locale = localeOf(entry.id);
+const t = useTranslations(locale);
+const categoryEntry = await resolve(entry.data.category);
+const category = { id: categoryEntry.id, name: taxonomyText(categoryEntry, locale).name };
 const crumbs = [
-  { name: 'Home', href: '/' },
-  { name: 'Travel tips', href: '/guides/' },
-  { name: category.data.name, href: guideCategoryHref(category.id) },
+  { name: t('nav.home'), href: localizePath('/', locale) },
+  { name: t('nav.guides'), href: localizePath('/guides/', locale) },
+  { name: category.name, href: guideCategoryHref(category.id, locale) },
   { name: entry.data.title, href: Astro.url.pathname },
 ];
 ---
 
 <ArticleLayout
   entry={entry}
-  eyebrow={`Travel tips · ${category.data.name}`}
+  eyebrow={t('guide.eyebrow', { category: category.name })}
   crumbs={crumbs}
-  filters={{ category: [category.data.name] }}
+  filters={{ category: [category.name] }}
 >
-  <p class="notice">
-    Prices, opening hours, fares and entry rules change. Check the official sources linked in this guide before you
-    travel.
-  </p>
+  <p class="notice">{t('guide.notice')}</p>
   <div class="prose body">
     <Content />
   </div>

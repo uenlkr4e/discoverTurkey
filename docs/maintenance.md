@@ -56,11 +56,13 @@ Its page appears once it has published content.
 | `src/data/` | Regions, interests, guide categories |
 | `src/content.config.ts` | Content schemas (the contract the build enforces) |
 | `src/lib/` | Pure logic: publication gate, validation, SEO, related content, ads and consent config |
-| `src/pages/` | Routes and templates |
+| `src/pages/` | Routes and templates; `src/pages/[locale]/` builds translated versions from the same templates |
+| `src/i18n/` | Languages and interface text (see [translations](translations.md)) |
 | `src/layouts/`, `src/components/` | Shared layout and UI |
 | `src/scripts/` | Browser code: ads loader, analytics events, privacy settings, sharing |
 | `public/admin/` | CMS |
 | `src/lib/headers.ts` | Security and caching headers on Cloudflare (built as `/_headers`) |
+| `scripts/make-pins.mjs` | Pinterest images (`npm run pins`, see [growing traffic](growth.md)) |
 | `tests/unit/`, `tests/e2e/` | Vitest and Playwright tests; `tests/fixtures/generate.mjs` builds the e2e content |
 
 ## Troubleshooting

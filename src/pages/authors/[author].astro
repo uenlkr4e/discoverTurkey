@@ -4,17 +4,14 @@ import { getImage, Image } from 'astro:assets';
 import Card from '../../components/Card.astro';
 import PageIntro from '../../components/PageIntro.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getArticles, getAuthorsWithContent, type ArticleEntry } from '../../lib/collections';
+import { localizePath, toLocale } from '../../i18n/locales';
+import { useTranslations } from '../../i18n/ui';
+import type { ArticleEntry } from '../../lib/collections';
+import { authorPaths } from '../../lib/routes';
 import { absoluteUrl, pageTitle, profilePageLd } from '../../lib/seo';
-import { authorHref, COLLECTION_LABEL, hrefFor } from '../../lib/urls';
+import { authorHref, hrefFor } from '../../lib/urls';
 
-export async function getStaticPaths() {
-  const [authors, articles] = await Promise.all([getAuthorsWithContent(), getArticles()]);
-  return authors.map((author) => ({
-    params: { author: author.id },
-    props: { author, articles: articles.filter((e) => e.data.author.id === author.id) },
-  }));
-}
+export const getStaticPaths = () => authorPaths();
 
 interface Props {
   author: CollectionEntry<'authors'>;
@@ -23,8 +20,10 @@ interface Props {
 
 const { author, articles } = Astro.props;
 const a = author.data;
+const locale = toLocale(Astro.currentLocale);
+const t = useTranslations(locale);
 const site = Astro.site!;
-const url = absoluteUrl(authorHref(author.id), site);
+const url = absoluteUrl(authorHref(author.id, locale), site);
 const photo = a.photo ? await getImage({ src: a.photo.src, width: 600, format: 'jpeg' }) : undefined;
 const profile = profilePageLd({
   name: a.name,
@@ -37,8 +36,8 @@ const profile = profilePageLd({
   sameAs: a.links.map((l) => l.url),
 });
 const crumbs = [
-  { name: 'Home', href: '/' },
-  { name: a.name, href: authorHref(author.id) },
+  { name: t('nav.home'), href: localizePath('/', locale) },
+  { name: a.name, href: authorHref(author.id, locale) },
 ];
 const description = a.bio.length > 160 ? `${a.bio.slice(0, 157).trimEnd()}…` : a.bio;
 ---
@@ -61,7 +60,7 @@ const description = a.bio.length > 160 ? `${a.bio.slice(0, 157).trimEnd()}…` :
           {
             a.knowsAbout.length > 0 && (
               <p class="knows">
-                <strong>Writes about:</strong> {a.knowsAbout.join(', ')}
+                <strong>{t('author.writesAbout')}</strong> {a.knowsAbout.join(', ')}
               </p>
             )
           }
@@ -72,7 +71,7 @@ const description = a.bio.length > 160 ? `${a.bio.slice(0, 157).trimEnd()}…` :
                   <li>
                     <a href={l.url} rel="me noopener" target="_blank">
                       {l.label}
-                      <span class="visually-hidden"> (opens in a new tab)</span>
+                      <span class="visually-hidden">{t('common.newTab')}</span>
                     </a>
                   </li>
                 ))}
@@ -84,7 +83,7 @@ const description = a.bio.length > 160 ? `${a.bio.slice(0, 157).trimEnd()}…` :
     </PageIntro>
 
     <section class="section" aria-labelledby="articles">
-      <h2 id="articles">{a.kind === 'organization' ? 'Our guides' : `Guides by ${a.name}`}</h2>
+      <h2 id="articles">{a.kind === 'organization' ? t('author.teamArticles') : t('author.articles', { name: a.name })}</h2>
       <ul class="card-grid">
         {
           articles.map((e) => (
@@ -94,7 +93,7 @@ const description = a.bio.length > 160 ? `${a.bio.slice(0, 157).trimEnd()}…` :
                 title={e.data.title}
                 summary={e.data.summary}
                 image={e.data.heroImage.src}
-                eyebrow={COLLECTION_LABEL[e.collection]}
+                eyebrow={t(`type.${e.collection}`)}
               />
             </li>
           ))

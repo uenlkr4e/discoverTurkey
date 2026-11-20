@@ -123,6 +123,49 @@ const files = {
     filler(120, 3),
   ),
 
+  // German translations sit in a locale subfolder and reference the English entries, as the CMS writes them.
+  'destinations/de/istanbul.md': markdown(
+    destination({
+      title: 'Istanbul',
+      summary: 'Ein deutsches Test-Reiseziel für Istanbul, das von den automatischen Tests verwendet wird.',
+      heroImage: { ...hero('teal.jpg', 'Testbild als Ersatz für die Skyline von Istanbul'), src: '../../images/teal.jpg' },
+      region: 'marmara',
+      interests: ['history', 'culture', 'food'],
+      coordinates: { lat: 41.0082, lng: 28.9784 },
+      featured: true,
+      // Not translated yet, so the German page must not link to it.
+      relatedDestinations: ['cappadocia'],
+    }),
+    filler(340, 10),
+  ),
+
+  'destinations/de/cappadocia.md': markdown(
+    destination({
+      title: 'Kappadokien',
+      summary: 'Ein deutscher Entwurf, der niemals auf der Live-Website oder in der Suche erscheinen darf.',
+      heroImage: { ...hero('sand.jpg', 'Testbild für einen deutschen Entwurf'), src: '../../images/sand.jpg' },
+      region: 'central-anatolia',
+      interests: ['history', 'nature'],
+      coordinates: { lat: 38.6431, lng: 34.8289 },
+      status: 'draft',
+      reviewedBy: undefined,
+      reviewedAt: undefined,
+    }),
+    filler(120, 11),
+  ),
+
+  'pages/de/about.md': markdown(
+    {
+      title: 'Über uns',
+      summary: 'Eine deutsche Testseite über die Website, die von den automatischen Tests verwendet wird.',
+      status: 'published',
+      reviewedBy: 'Test Editor',
+      reviewedAt: new Date('2026-10-01'),
+      updatedAt: new Date('2026-10-01'),
+    },
+    filler(80, 12),
+  ),
+
   'guides/getting-around-turkey.md': markdown(
     {
       title: 'Getting around Turkey',

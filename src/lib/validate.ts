@@ -4,6 +4,8 @@ import { isoDate } from './format';
 export interface CheckEntry {
   key: string;
   collection: string;
+  /** Titles and descriptions only need to be unique within a language. Defaults to "en". */
+  locale?: string;
   title: string;
   seoTitle?: string;
   /** The effective meta description (seoDescription ?? summary). */
@@ -35,7 +37,7 @@ function duplicates(entries: CheckEntry[], valueOf: (e: CheckEntry) => string): 
   const groups = new Map<string, { value: string; keys: string[] }>();
   for (const e of entries) {
     const value = valueOf(e);
-    const norm = value.trim().toLowerCase();
+    const norm = `${e.locale ?? 'en'}:${value.trim().toLowerCase()}`;
     const group = groups.get(norm) ?? { value, keys: [] };
     group.keys.push(e.key);
     groups.set(norm, group);

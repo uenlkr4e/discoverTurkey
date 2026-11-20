@@ -2,7 +2,7 @@ import { track } from './analytics';
 
 export function initShare(): void {
   for (const root of document.querySelectorAll<HTMLElement>('[data-share]')) {
-    const { title = document.title, url = location.href, contentType = 'page' } = root.dataset;
+    const { title = document.title, url = location.href, contentType = 'page', copied, copyFailed } = root.dataset;
     const status = root.querySelector<HTMLElement>('[data-share-status]');
     const native = root.querySelector<HTMLButtonElement>('[data-share-native]');
     const copy = root.querySelector<HTMLButtonElement>('[data-share-copy]');
@@ -22,10 +22,10 @@ export function initShare(): void {
     copy?.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(url);
-        if (status) status.textContent = 'Link copied';
+        if (status) status.textContent = copied ?? 'Link copied';
         track('share', { method: 'copy_link', content_type: contentType });
       } catch {
-        if (status) status.textContent = 'Could not copy the link. Copy it from the address bar instead.';
+        if (status) status.textContent = copyFailed ?? 'Could not copy the link.';
       }
     });
 

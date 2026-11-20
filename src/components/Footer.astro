@@ -1,6 +1,14 @@
 ---
 import { FOOTER_LINKS, NAV, SITE } from '../config/site';
+import { localizePath, toLocale } from '../i18n/locales';
+import { useTranslations } from '../i18n/ui';
+import { getBuiltPaths } from '../lib/collections';
 
+const locale = toLocale(Astro.currentLocale);
+const t = useTranslations(locale);
+const built = await getBuiltPaths();
+// Translated pages where they exist, otherwise the English ones.
+const local = (path: string) => (built.has(localizePath(path, locale)) ? localizePath(path, locale) : path);
 const year = new Date().getFullYear();
 ---
 
@@ -8,14 +16,14 @@ const year = new Date().getFullYear();
   <div class="container grid">
     <div>
       <p class="brand">{SITE.name}</p>
-      <p class="muted">{SITE.description}</p>
+      <p class="muted">{t('site.description')}</p>
     </div>
-    <nav aria-label="Explore">
-      <ul>{NAV.map((item) => <li><a href={item.href}>{item.label}</a></li>)}</ul>
+    <nav aria-label={t('footer.explore')}>
+      <ul>{NAV.map((item) => <li><a href={local(item.href)}>{t(item.key)}</a></li>)}</ul>
     </nav>
-    <nav aria-label="About this site">
+    <nav aria-label={t('footer.aboutSite')}>
       <ul>
-        {FOOTER_LINKS.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+        {FOOTER_LINKS.map((item) => <li><a href={local(item.href)}>{t(item.key)}</a></li>)}
         <slot />
       </ul>
     </nav>

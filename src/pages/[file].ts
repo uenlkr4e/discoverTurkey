@@ -6,9 +6,12 @@ import { ads, newsletter } from '../lib/site-env';
 const FILES: Record<string, () => string> = {
   // Cloudflare Pages reads security headers from this file in the build output.
   _headers: () => headersFile({ formOrigins: newsletter ? [newsletter.origin] : [] }),
-  // ads.txt exists only when ads are configured.
-  ...(ads ? { 'ads.txt': () => adsTxt(ads) } : {}),
 };
+// ads.txt exists only when ads are configured.
+if (ads) {
+  const config = ads;
+  FILES['ads.txt'] = () => adsTxt(config);
+}
 
 export function getStaticPaths() {
   return Object.keys(FILES).map((file) => ({ params: { file } }));

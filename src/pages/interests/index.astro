@@ -2,24 +2,28 @@
 import PageIntro from '../../components/PageIntro.astro';
 import InterestTiles from '../../components/InterestTiles.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { localizePath, toLocale } from '../../i18n/locales';
+import { useTranslations } from '../../i18n/ui';
 import { getInterestsWithContent } from '../../lib/collections';
 import { pageTitle } from '../../lib/seo';
 
-const interests = await getInterestsWithContent();
+const locale = toLocale(Astro.currentLocale);
+const t = useTranslations(locale);
+const interests = await getInterestsWithContent(locale);
 const crumbs = [
-  { name: 'Home', href: '/' },
-  { name: 'Experiences', href: '/interests/' },
+  { name: t('nav.home'), href: localizePath('/', locale) },
+  { name: t('nav.interests'), href: localizePath('/interests/', locale) },
 ];
 ---
 
 <BaseLayout
-  title={pageTitle('Things to do in Turkey by interest')}
-  description="Find destinations and itineraries in Turkey for history, beaches, nature, food, culture and family travel."
+  title={pageTitle(t('interests.title'))}
+  description={t('interests.description')}
   crumbs={crumbs}
   noindex={interests.length === 0}
 >
   <div class="container">
-    <PageIntro title="Experiences" lede="Choose what you love doing and we'll show you where to go." />
+    <PageIntro title={t('interests.heading')} lede={t('interests.lede')} />
     <InterestTiles interests={interests} headingLevel={2} />
   </div>
 </BaseLayout>

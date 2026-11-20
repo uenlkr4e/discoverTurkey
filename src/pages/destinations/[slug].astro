@@ -3,17 +3,16 @@ import { render } from 'astro:content';
 import FactBox from '../../components/FactBox.astro';
 import MapLinks from '../../components/MapLinks.astro';
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
-import { getDestinations, resolve, type Destination } from '../../lib/collections';
-import { capitalize } from '../../lib/format';
+import { localeOf, localizePath } from '../../i18n/locales';
+import { useTranslations } from '../../i18n/ui';
+import { resolve, taxonomyText, type Destination } from '../../lib/collections';
 import { renderMarkdown } from '../../lib/markdown';
+import { destinationPaths } from '../../lib/routes';
 import { SEASONS } from '../../lib/season';
 import { absoluteUrl, touristDestinationLd } from '../../lib/seo';
 import { interestHref, regionHref } from '../../lib/urls';
 
-export async function getStaticPaths() {
-  const destinations = await getDestinations();
-  return destinations.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
-}
+export const getStaticPaths = () => destinationPaths();
 
 interface Props {
   entry: Destination;
@@ -22,11 +21,15 @@ interface Props {
 const { entry } = Astro.props;
 const d = entry.data;
 const { Content } = await render(entry);
-const [region, interests] = await Promise.all([resolve(d.region), Promise.all(d.interests.map(resolve))]);
+const locale = localeOf(entry.id);
+const t = useTranslations(locale);
+const [regionEntry, interestEntries] = await Promise.all([resolve(d.region), Promise.all(d.interests.map(resolve))]);
+const region = { id: regionEntry.id, name: taxonomyText(regionEntry, locale).name };
+const interests = interestEntries.map((i) => ({ id: i.id, name: taxonomyText(i, locale).name }));
 
 const crumbs = [
-  { name: 'Home', href: '/' },
-  { name: 'Destinations', href: '/destinations/' },
+  { name: t('nav.home'), href: localizePath('/', locale) },
+  { name: t('nav.destinations'), href: localizePath('/destinations/', locale) },
   { name: d.title, href: Astro.url.pathname },
 ];
 const place = touristDestinationLd({
@@ -40,16 +43,16 @@ const place = touristDestinationLd({
 
 <ArticleLayout
   entry={entry}
-  eyebrow={`${region.data.name} region`}
+  eyebrow={t('destination.eyebrow', { region: region.name })}
   crumbs={crumbs}
   jsonLd={[place]}
-  filters={{ region: [region.data.name], interest: interests.map((i) => i.data.name) }}
+  filters={{ region: [region.name], interest: interests.map((i) => i.name) }}
 >
   <FactBox
     facts={[
-      { label: 'Region', value: region.data.name, href: regionHref(region.id) },
-      { label: 'Best time to visit', value: d.bestTimeToVisit.summary },
-      { label: 'Suggested stay', value: d.suggestedDuration },
+      { label: t('destination.region'), value: region.name, href: regionHref(region.id, locale) },
+      { label: t('destination.bestTime'), value: d.bestTimeToVisit.summary },
+      { label: t('destination.stay'), value: d.suggestedDuration },
     ]}
   />
 
@@ -58,13 +61,13 @@ const place = touristDestinationLd({
   </div>
 
   <section aria-labelledby="best-time">
-    <h2 id="best-time">Best time to visit</h2>
+    <h2 id="best-time">{t('destination.bestTime')}</h2>
     <p class="prose">{d.bestTimeToVisit.summary}</p>
     <dl class="seasons">
       {
         SEASONS.map((season) => (
           <div>
-            <dt>{capitalize(season)}</dt>
+            <dt>{t(`season.${season}`)}</dt>
             <dd>{d.bestTimeToVisit[season]}</dd>
           </div>
         ))
@@ -73,7 +76,7 @@ const place = touristDestinationLd({
   </section>
 
   <section aria-labelledby="attractions">
-    <h2 id="attractions">Top attractions and things to do</h2>
+    <h2 id="attractions">{t('destination.attractions')}</h2>
     {
       d.attractions.map((attraction) => (
         <>
@@ -85,29 +88,29 @@ const place = touristDestinationLd({
   </section>
 
   <section aria-labelledby="getting-there">
-    <h2 id="getting-there">Getting there</h2>
+    <h2 id="getting-there">{t('destination.gettingThere')}</h2>
     <div class="prose" set:html={renderMarkdown(d.gettingThere)} />
   </section>
 
   <section aria-labelledby="getting-around">
-    <h2 id="getting-around">Getting around</h2>
+    <h2 id="getting-around">{t('destination.gettingAround')}</h2>
     <div class="prose" set:html={renderMarkdown(d.gettingAround)} />
   </section>
 
   <section aria-labelledby="food">
-    <h2 id="food">Food and local experiences</h2>
+    <h2 id="food">{t('destination.food')}</h2>
     <div class="prose" set:html={renderMarkdown(d.foodAndExperiences)} />
   </section>
 
   <section aria-labelledby="map">
-    <h2 id="map">Map</h2>
+    <h2 id="map">{t('destination.map')}</h2>
     <MapLinks name={d.title} lat={d.coordinates.lat} lng={d.coordinates.lng} />
   </section>
 
   <section aria-labelledby="good-for">
-    <h2 id="good-for">Good for</h2>
+    <h2 id="good-for">{t('common.goodFor')}</h2>
     <ul class="chip-list">
-      {interests.map((i) => <li><a href={interestHref(i.id)}>{i.data.name}</a></li>)}
+      {interests.map((i) => <li><a href={interestHref(i.id, locale)}>{i.name}</a></li>)}
     </ul>
   </section>
 </ArticleLayout>

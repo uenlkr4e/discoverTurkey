@@ -2,40 +2,41 @@
 import Card from '../../components/Card.astro';
 import PageIntro from '../../components/PageIntro.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getDestinations, getInterestsWithContent, getRegionsWithContent } from '../../lib/collections';
+import { localizePath, toLocale } from '../../i18n/locales';
+import { useTranslations } from '../../i18n/ui';
+import { getDestinations, getInterestsWithContent, getRegionsWithContent, taxonomyText } from '../../lib/collections';
 import { pageTitle } from '../../lib/seo';
 import { hrefFor, interestHref, regionHref } from '../../lib/urls';
 
+const locale = toLocale(Astro.currentLocale);
+const t = useTranslations(locale);
 const [destinations, regions, interests] = await Promise.all([
-  getDestinations(),
-  getRegionsWithContent(),
-  getInterestsWithContent(),
+  getDestinations(locale),
+  getRegionsWithContent(locale),
+  getInterestsWithContent(locale),
 ]);
-const regionNames = new Map(regions.map((r) => [r.id, r.data.name]));
+const regionNames = new Map(regions.map((r) => [r.id, taxonomyText(r, locale).name]));
 const crumbs = [
-  { name: 'Home', href: '/' },
-  { name: 'Destinations', href: '/destinations/' },
+  { name: t('nav.home'), href: localizePath('/', locale) },
+  { name: t('nav.destinations'), href: localizePath('/destinations/', locale) },
 ];
 ---
 
 <BaseLayout
-  title={pageTitle('Destinations in Turkey')}
-  description="Explore Turkey's top destinations by region and interest, from Istanbul and Cappadocia to the Aegean and Mediterranean coasts."
+  title={pageTitle(t('destinations.title'))}
+  description={t('destinations.description')}
   crumbs={crumbs}
   noindex={destinations.length === 0}
 >
   <div class="container">
-    <PageIntro
-      title="Destinations in Turkey"
-      lede="Where to go, what to see and how long to stay, with guides reviewed by our editors."
-    />
+    <PageIntro title={t('destinations.title')} lede={t('destinations.lede')} />
 
     {
       regions.length > 0 && (
         <section class="section" aria-labelledby="by-region">
-          <h2 id="by-region">Browse by region</h2>
+          <h2 id="by-region">{t('common.browseByRegion')}</h2>
           <ul class="chip-list">
-            {regions.map((r) => <li><a href={regionHref(r.id)}>{r.data.name}</a></li>)}
+            {regions.map((r) => <li><a href={regionHref(r.id, locale)}>{regionNames.get(r.id)}</a></li>)}
           </ul>
         </section>
       )
@@ -44,16 +45,16 @@ const crumbs = [
     {
       interests.length > 0 && (
         <section class="section" aria-labelledby="by-interest">
-          <h2 id="by-interest">Browse by interest</h2>
+          <h2 id="by-interest">{t('common.browseByInterest')}</h2>
           <ul class="chip-list">
-            {interests.map((i) => <li><a href={interestHref(i.id)}>{i.data.name}</a></li>)}
+            {interests.map((i) => <li><a href={interestHref(i.id, locale)}>{taxonomyText(i, locale).name}</a></li>)}
           </ul>
         </section>
       )
     }
 
     <section class="section" aria-labelledby="all-destinations">
-      <h2 id="all-destinations">All destinations</h2>
+      <h2 id="all-destinations">{t('destinations.all')}</h2>
       {
         destinations.length > 0 ? (
           <ul class="card-grid">
@@ -70,7 +71,7 @@ const crumbs = [
             ))}
           </ul>
         ) : (
-          <p>Our first destination guides are being reviewed and will appear here soon.</p>
+          <p>{t('destinations.empty')}</p>
         )
       }
     </section>

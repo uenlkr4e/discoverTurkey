@@ -73,6 +73,14 @@ Published destinations and guides need at least 300 words. Pages reviewed more t
 
 Images are stored in `src/content/images/`.
 
+## Authors
+
+Each entry has an **Author**, shown in the byline and linked to an author page. Use real, named authors with a bio, photo and links to their profiles elsewhere: readers and search engines trust identifiable people with first-hand experience. See [growing traffic](growth.md#2-authors-show-who-writes-the-site).
+
+## Translations
+
+Entries can be translated in the CMS with the language selector. Each translation has its own status and review fields, and is published separately. See [translations](translations.md).
+
 ## Regions, interests and guide categories
 
 Edit these under **Regions, interests and categories** in the CMS, or in `src/data/*.yaml`.

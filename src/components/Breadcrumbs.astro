@@ -1,4 +1,6 @@
 ---
+import { toLocale } from '../i18n/locales';
+import { useTranslations } from '../i18n/ui';
 import type { Crumb } from '../lib/seo';
 
 interface Props {
@@ -6,9 +8,10 @@ interface Props {
 }
 
 const { crumbs } = Astro.props;
+const t = useTranslations(toLocale(Astro.currentLocale));
 ---
 
-<nav class="container breadcrumbs" aria-label="Breadcrumb">
+<nav class="container breadcrumbs" aria-label={t('nav.breadcrumb')}>
   <ol>
     {
       crumbs.map((crumb, i) => (

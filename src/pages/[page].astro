@@ -3,15 +3,14 @@ import { render, type CollectionEntry } from 'astro:content';
 import DraftBanner from '../components/DraftBanner.astro';
 import PageIntro from '../components/PageIntro.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getPages } from '../lib/collections';
+import { localeOf, localizePath } from '../i18n/locales';
+import { useTranslations } from '../i18n/ui';
 import { isPublished } from '../lib/content';
 import { formatDate, isoDate } from '../lib/format';
+import { pagePaths } from '../lib/routes';
 import { pageTitle } from '../lib/seo';
 
-export async function getStaticPaths() {
-  const pages = await getPages();
-  return pages.map((entry) => ({ params: { page: entry.id }, props: { entry } }));
-}
+export const getStaticPaths = () => pagePaths();
 
 interface Props {
   entry: CollectionEntry<'pages'>;
@@ -20,8 +19,10 @@ interface Props {
 const { entry } = Astro.props;
 const d = entry.data;
 const { Content } = await render(entry);
+const locale = localeOf(entry.id);
+const t = useTranslations(locale);
 const crumbs = [
-  { name: 'Home', href: '/' },
+  { name: t('nav.home'), href: localizePath('/', locale) },
   { name: d.title, href: Astro.url.pathname },
 ];
 ---
@@ -30,7 +31,9 @@ const crumbs = [
   {!isPublished(d) && <DraftBanner slot="banner" status={d.status} />}
   <div class="container">
     <PageIntro title={d.title}>
-      <p class="updated">Last updated <time datetime={isoDate(d.updatedAt)}>{formatDate(d.updatedAt)}</time></p>
+      <p class="updated">
+        {t('page.updated')} <time datetime={isoDate(d.updatedAt)}>{formatDate(d.updatedAt, locale)}</time>
+      </p>
     </PageIntro>
     <div class="prose">
       <Content />

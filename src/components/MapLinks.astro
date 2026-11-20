@@ -1,4 +1,7 @@
 ---
+import { toLocale } from '../i18n/locales';
+import { useTranslations } from '../i18n/ui';
+
 interface Props {
   name: string;
   lat: number;
@@ -7,11 +10,12 @@ interface Props {
 
 // Plain links instead of an embedded map: no third-party scripts and no layout shift.
 const { name, lat, lng } = Astro.props;
+const t = useTranslations(toLocale(Astro.currentLocale));
 const google = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
 const osm = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=11/${lat}/${lng}`;
 ---
 
 <ul class="chip-list">
-  <li><a href={google} rel="noopener">{name} on Google Maps</a></li>
-  <li><a href={osm} rel="noopener">{name} on OpenStreetMap</a></li>
+  <li><a href={google} rel="noopener">{t('destination.googleMaps', { name })}</a></li>
+  <li><a href={osm} rel="noopener">{t('destination.osm', { name })}</a></li>
 </ul>

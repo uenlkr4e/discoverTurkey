@@ -1,4 +1,7 @@
 ---
+import { localizePath, toLocale } from '../i18n/locales';
+import { useTranslations } from '../i18n/ui';
+import { getBuiltPaths } from '../lib/collections';
 import { newsletter } from '../lib/site-env';
 
 interface Props {
@@ -8,16 +11,17 @@ interface Props {
 
 const { placement } = Astro.props;
 const id = `newsletter-${placement}`;
+const locale = toLocale(Astro.currentLocale);
+const t = useTranslations(locale);
+const privacyPath = localizePath('/privacy/', locale);
+const privacy = (await getBuiltPaths()).has(privacyPath) ? privacyPath : '/privacy/';
 ---
 
 {
   newsletter && (
     <section class="newsletter" aria-labelledby={`${id}-heading`} data-pagefind-ignore="all">
-      <h2 id={`${id}-heading`}>Plan a better trip to Turkey</h2>
-      <p>
-        One email a month with our new guides, seasonal tips and changes that affect travellers, such as new entry
-        rules. No spam; unsubscribe any time.
-      </p>
+      <h2 id={`${id}-heading`}>{t('newsletter.heading')}</h2>
+      <p>{t('newsletter.body')}</p>
       <form
         method="post"
         action={newsletter.action}
@@ -25,7 +29,7 @@ const id = `newsletter-${placement}`;
         data-newsletter={placement}
         class="newsletter-form"
       >
-        <label for={`${id}-email`}>Email address</label>
+        <label for={`${id}-email`}>{t('newsletter.label')}</label>
         <div class="newsletter-row">
           <input
             id={`${id}-email`}
@@ -35,12 +39,13 @@ const id = `newsletter-${placement}`;
             required
           />
           <button type="submit">
-            Subscribe<span class="visually-hidden"> (opens in a new tab)</span>
+            {t('newsletter.submit')}
+            <span class="visually-hidden">{t('common.newTab')}</span>
           </button>
         </div>
       </form>
       <p class="newsletter-note">
-        Emails are sent by {newsletter.provider}. See our <a href="/privacy/">privacy policy</a>.
+        {t('newsletter.note', { provider: newsletter.provider })} <a href={privacy}>{t('newsletter.privacy')}</a>
       </p>
     </section>
   )

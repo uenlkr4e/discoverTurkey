@@ -5,6 +5,7 @@ import { parse } from 'yaml';
 interface Field {
   name: string;
   widget?: string;
+  i18n?: boolean | 'duplicate';
   fields?: Field[];
   collection?: string;
   file?: string;
@@ -20,7 +21,8 @@ interface Collection {
 const config = parse(readFileSync('public/admin/config.yml', 'utf8')) as {
   media_folder: string;
   public_folder: string;
-  collections: Collection[];
+  i18n: { structure: string; locales: string[]; default_locale: string; omit_default_locale_from_file_path: boolean };
+  collections: (Collection & { i18n?: boolean })[];
 };
 const byName = new Map(config.collections.map((c) => [c.name, c]));
 
@@ -41,6 +43,30 @@ const EXPECTED: Record<string, string[]> = {
 };
 
 describe('CMS config', () => {
+  it('stores translations where the site reads them', async () => {
+    const { LOCALE_CODES, DEFAULT_LOCALE } = await import('../../src/i18n/locales');
+    // e.g. src/content/destinations/de/istanbul.md, with English files at the top level.
+    expect(config.i18n).toEqual({
+      structure: 'multiple_folders',
+      locales: LOCALE_CODES,
+      default_locale: DEFAULT_LOCALE,
+      omit_default_locale_from_file_path: true,
+    });
+  });
+
+  it('writes every field into translated entries, so they pass the content schema', () => {
+    const missing = (fields: Field[], path: string): string[] =>
+      fields.flatMap((f) => [
+        ...(f.i18n === true || f.i18n === 'duplicate' ? [] : [`${path}.${f.name}`]),
+        ...missing(f.fields ?? [], `${path}.${f.name}`),
+      ]);
+    for (const name of ['destinations', 'guides', 'itineraries', 'pages']) {
+      const c = byName.get(name)!;
+      expect(c.i18n, name).toBe(true);
+      expect(missing(c.fields ?? [], name)).toEqual([]);
+    }
+  });
+
   for (const [name, keys] of Object.entries(EXPECTED)) {
     it(`edits exactly the schema fields of ${name}`, () => {
       const fields = byName.get(name)?.fields?.map((f) => f.name) ?? [];
@@ -77,7 +103,7 @@ describe('CMS config', () => {
     const files = byName.get('taxonomies')!.files!;
     for (const file of files) {
       expect(existsSync(file.file)).toBe(true);
-      expect(file.fields[0].fields!.map((f) => f.name)).toEqual(['id', 'name', 'description']);
+      expect(file.fields[0].fields!.map((f) => f.name)).toEqual(['id', 'name', 'description', 'translations']);
     }
   });
 

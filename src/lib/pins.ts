@@ -7,8 +7,8 @@ export const PIN_HEIGHT = 1500;
 
 export type PinCollection = 'destinations' | 'guides' | 'itineraries';
 
-/** Public path of an entry's pin image. */
-export const pinPath = (collection: PinCollection, id: string) => `/pins/${collection}-${id}.jpg`;
+/** Public path of an entry's pin image. Translations (ids like "de/istanbul") get their own file. */
+export const pinPath = (collection: PinCollection, id: string) => `/pins/${collection}-${id.replaceAll('/', '-')}.jpg`;
 
 export const PIN_BOARDS: Record<PinCollection, string> = {
   destinations: 'Turkey destinations',

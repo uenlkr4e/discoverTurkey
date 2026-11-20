@@ -6,6 +6,8 @@ import InterestTiles from '../components/InterestTiles.astro';
 import NewsletterSignup from '../components/NewsletterSignup.astro';
 import SearchBox from '../components/SearchBox.astro';
 import { SITE } from '../config/site';
+import { localizePath, toLocale } from '../i18n/locales';
+import { useTranslations } from '../i18n/ui';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import {
   getDestinations,
@@ -13,17 +15,20 @@ import {
   getInterestsWithContent,
   getItineraries,
   getRegionsWithContent,
+  taxonomyText,
 } from '../lib/collections';
 import { seasonFor } from '../lib/season';
 import { organizationLd, websiteLd } from '../lib/seo';
 import { hrefFor, regionHref } from '../lib/urls';
 
+const locale = toLocale(Astro.currentLocale);
+const t = useTranslations(locale);
 const [destinations, guides, itineraries, interests, regions] = await Promise.all([
-  getDestinations(),
-  getGuides(),
-  getItineraries(),
-  getInterestsWithContent(),
-  getRegionsWithContent(),
+  getDestinations(locale),
+  getGuides(locale),
+  getItineraries(locale),
+  getInterestsWithContent(locale),
+  getRegionsWithContent(locale),
 ]);
 
 // Computed at build time; a scheduled weekly rebuild keeps it current.
@@ -36,8 +41,8 @@ const heroImage = (seasonal[0] ?? featured[0])?.data.heroImage;
 ---
 
 <BaseLayout
-  title={`${SITE.name}: ${SITE.tagline}`}
-  description={SITE.description}
+  title={`${SITE.name}: ${t('site.tagline')}`}
+  description={t('site.description')}
   image={featured[0]?.data.heroImage.src}
   imageAlt={featured[0]?.data.heroImage.alt}
   jsonLd={[websiteLd(site), organizationLd(site)]}
@@ -45,11 +50,8 @@ const heroImage = (seasonal[0] ?? featured[0])?.data.heroImage;
   <section class="hero">
     <div class="container hero-grid">
       <div class="hero-copy">
-        <h1>{SITE.tagline}</h1>
-        <p class="lede">
-          Destination guides, day-by-day itineraries and practical advice for planning your trip, all reviewed by our
-          editors.
-        </p>
+        <h1>{t('site.tagline')}</h1>
+        <p class="lede">{t('home.lede')}</p>
         <SearchBox id="home-search" />
       </div>
       {
@@ -66,7 +68,7 @@ const heroImage = (seasonal[0] ?? featured[0])?.data.heroImage;
               />
             </div>
             <figcaption>
-              Photo: <a href={heroImage.credit.sourceUrl} rel="noopener">{heroImage.credit.author}</a>,{' '}
+              {t('common.photo')} <a href={heroImage.credit.sourceUrl} rel="noopener">{heroImage.credit.author}</a>,{' '}
               {heroImage.credit.license}
             </figcaption>
           </figure>
@@ -79,7 +81,7 @@ const heroImage = (seasonal[0] ?? featured[0])?.data.heroImage;
     {
       featured.length > 0 && (
         <section class="section" aria-labelledby="featured">
-          <h2 id="featured">Featured destinations</h2>
+          <h2 id="featured">{t('home.featured')}</h2>
           <ul class="card-grid featured-grid">
             {featured.map((d) => (
               <li>
@@ -94,7 +96,7 @@ const heroImage = (seasonal[0] ?? featured[0])?.data.heroImage;
     {
       seasonal.length > 0 && (
         <section class="section band" aria-labelledby="seasonal">
-          <h2 id="seasonal">Where to go in {season}</h2>
+          <h2 id="seasonal">{t(`home.seasonal.${season}`)}</h2>
           <ul class="card-grid seasonal-grid">
             {seasonal.map((d) => (
               <li>
@@ -114,7 +116,7 @@ const heroImage = (seasonal[0] ?? featured[0])?.data.heroImage;
     {
       interests.length > 0 && (
         <section class="section" aria-labelledby="interests">
-          <h2 id="interests">Browse by interest</h2>
+          <h2 id="interests">{t('common.browseByInterest')}</h2>
           <div class="interest-wrap">
             <InterestTiles interests={interests} />
           </div>
@@ -125,11 +127,11 @@ const heroImage = (seasonal[0] ?? featured[0])?.data.heroImage;
     {
       regions.length > 0 && (
         <section class="section" aria-labelledby="regions">
-          <h2 id="regions">Browse by region</h2>
+          <h2 id="regions">{t('common.browseByRegion')}</h2>
           <ul class="chip-list">
             {regions.map((r) => (
               <li>
-                <a href={regionHref(r.id)}>{r.data.name}</a>
+                <a href={regionHref(r.id, locale)}>{taxonomyText(r, locale).name}</a>
               </li>
             ))}
           </ul>
@@ -140,7 +142,7 @@ const heroImage = (seasonal[0] ?? featured[0])?.data.heroImage;
     {
       guides.length > 0 && (
         <section class="section band" aria-labelledby="plan">
-          <h2 id="plan">Plan your trip</h2>
+          <h2 id="plan">{t('home.plan')}</h2>
           <ul class="card-grid three-up">
             {guides.slice(0, 6).map((g) => (
               <li>
@@ -149,7 +151,7 @@ const heroImage = (seasonal[0] ?? featured[0])?.data.heroImage;
             ))}
           </ul>
           <p class="more-link">
-            <a href="/guides/">All travel tips</a>
+            <a href={localizePath('/guides/', locale)}>{t('home.allGuides')}</a>
           </p>
         </section>
       )
@@ -158,7 +160,7 @@ const heroImage = (seasonal[0] ?? featured[0])?.data.heroImage;
     {
       itineraries.length > 0 && (
         <section class="section" aria-labelledby="itineraries">
-          <h2 id="itineraries">Popular itineraries</h2>
+          <h2 id="itineraries">{t('home.itineraries')}</h2>
           <ul class="card-grid three-up">
             {itineraries.slice(0, 3).map((it) => (
               <li>
@@ -167,13 +169,13 @@ const heroImage = (seasonal[0] ?? featured[0])?.data.heroImage;
                   title={it.data.title}
                   summary={it.data.summary}
                   image={it.data.heroImage.src}
-                  eyebrow={`${it.data.days} days`}
+                  eyebrow={t.plural('common.days', it.data.days)}
                 />
               </li>
             ))}
           </ul>
           <p class="more-link">
-            <a href="/itineraries/">All itineraries</a>
+            <a href={localizePath('/itineraries/', locale)}>{t('home.allItineraries')}</a>
           </p>
         </section>
       )
