@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './test';
 
 test('returns the matching destination first', async ({ page }) => {
   await page.goto('/search/?q=cappadocia');

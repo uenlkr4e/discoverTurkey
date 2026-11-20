@@ -2,6 +2,7 @@
 import type { ImageMetadata } from 'astro';
 import { Font, getImage } from 'astro:assets';
 import '../styles/global.css';
+import '../styles/ads.css';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
@@ -9,6 +10,7 @@ import { SITE } from '../config/site';
 import { showDrafts } from '../lib/collections';
 import { assertContentValid } from '../lib/content-checks';
 import { absoluteUrl, breadcrumbLd, jsonLdScript, type Crumb } from '../lib/seo';
+import { ads, consentDefaultArgs, gaId } from '../lib/site-env';
 
 interface Props {
   /** Full <title>, usually from pageTitle(). */
@@ -36,10 +38,31 @@ const robots = noindex || showDrafts ? 'noindex, nofollow' : 'index, follow, max
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-ads-npa={ads ? String(ads.nonPersonalized) : undefined}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Consent defaults must be set before any Google tag loads. -->
+    <script is:inline define:vars={{ consentDefaultArgs }}>
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () {
+        window.dataLayer.push(arguments);
+      };
+      for (const args of consentDefaultArgs) window.gtag('consent', 'default', args);
+      window.gtag('set', 'ads_data_redaction', true);
+      window.gtag('set', 'url_passthrough', false);
+    </script>
+    {
+      gaId && (
+        <>
+          <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} />
+          <script is:inline define:vars={{ gaId }}>
+            window.gtag('js', new Date());
+            window.gtag('config', gaId);
+          </script>
+        </>
+      )
+    }
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
@@ -75,6 +98,40 @@ const robots = noindex || showDrafts ? 'noindex, nofollow' : 'index, follow, max
     <main id="main" tabindex="-1">
       <slot />
     </main>
-    <Footer />
+    <Footer>
+      {
+        ads && (
+          <li>
+            <button type="button" class="privacy-settings" data-privacy-settings hidden>
+              Privacy settings
+            </button>
+          </li>
+        )
+      }
+    </Footer>
+    <script>
+      import { initAds } from '../scripts/ads';
+      import { initAnalytics } from '../scripts/analytics';
+      import { initPrivacySettings } from '../scripts/consent';
+      import { initShare } from '../scripts/share';
+
+      initAnalytics();
+      initPrivacySettings();
+      initShare();
+      initAds();
+    </script>
   </body>
 </html>
+
+<style>
+  .privacy-settings {
+    min-height: 44px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+</style>

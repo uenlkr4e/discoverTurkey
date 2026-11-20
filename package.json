@@ -12,7 +12,7 @@
     "check": "astro check",
     "test": "vitest run",
     "fixtures": "node tests/fixtures/generate.mjs",
-    "build:fixtures": "npm run fixtures && cross-env CONTENT_DIR=./tests/fixtures/.generated astro build --force && pagefind --site dist",
+    "build:fixtures": "npm run fixtures && cross-env CONTENT_DIR=./tests/fixtures/.generated PUBLIC_ADS_ENABLED=true PUBLIC_ADSENSE_CLIENT=ca-pub-0000000000000000 PUBLIC_AD_SLOT_INCONTENT=1111111111 PUBLIC_AD_SLOT_SIDEBAR=2222222222 PUBLIC_AD_SLOT_FOOTER=3333333333 PUBLIC_GA4_ID=G-TEST000000 astro build --force && pagefind --site dist",
     "test:e2e": "playwright test"
   },
   "dependencies": {

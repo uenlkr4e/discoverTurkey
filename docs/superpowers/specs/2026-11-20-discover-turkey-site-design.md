@@ -321,6 +321,9 @@ No ads on search, the legal pages, inside navigation, or above the first heading
 - **Sitemap:** a custom `/sitemap.xml` endpoint, built from the same publication-gated queries as the pages, replaces `@astrojs/sitemap`.
 - **Reference checks:** broken `related` and `stops` references are caught by Astro's own reference validation, so `validate.ts` doesn't repeat them.
 - **Preview mode:** `PUBLIC_ENV=preview` enables draft rendering, set as a preview-only environment variable in Cloudflare.
+- **In-content ad:** placed at render time in the article column (before the third, or second, h2 once the column has 600+ words), not by a Markdown plugin. Astro 7's default Markdown processor no longer runs rehype plugins, and render-time placement keeps ad settings out of cached content.
+- **Consent mode:** `PUBLIC_CONSENT_MODE` selects `strict` (default: denied everywhere, `requestNonPersonalizedAds` set) or `regional` (denied by default only in the EEA, UK and Switzerland). The site owner decides when `regional` is appropriate.
+- **Sharing:** native share where available, copy link, and WhatsApp, X and Facebook links, with no third-party scripts.
 - **Search filters:** Pagefind indexes type, region, interest and category filters. The search UI exposes the type filter; region and interest browsing are served by the browse pages.
 
 ## 18. Out of scope (MVP)

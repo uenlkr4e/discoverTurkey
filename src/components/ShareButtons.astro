@@ -1,0 +1,71 @@
+---
+interface Props {
+  title: string;
+  url: string;
+  contentType: string;
+}
+
+const { title, url, contentType } = Astro.props;
+const text = encodeURIComponent(title);
+const link = encodeURIComponent(url);
+const networks = [
+  { method: 'whatsapp', label: 'WhatsApp', href: `https://wa.me/?text=${text}%20${link}` },
+  { method: 'x', label: 'X', href: `https://x.com/intent/tweet?text=${text}&url=${link}` },
+  { method: 'facebook', label: 'Facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${link}` },
+];
+---
+
+<section class="share" aria-labelledby="share-heading" data-share data-title={title} data-url={url} data-content-type={contentType} data-pagefind-ignore>
+  <h2 id="share-heading" class="share-heading">Share this page</h2>
+  <ul class="chip-list">
+    <li><button type="button" class="chip" data-share-native hidden>Share…</button></li>
+    <li><button type="button" class="chip" data-share-copy>Copy link</button></li>
+    {
+      networks.map((n) => (
+        <li>
+          <a href={n.href} target="_blank" rel="noopener" data-share-method={n.method}>
+            {n.label}
+            <span class="visually-hidden"> (opens in a new tab)</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+  <p class="share-status" data-share-status role="status"></p>
+</section>
+
+<style>
+  .share {
+    margin-block: var(--space-5);
+  }
+
+  .share-heading {
+    margin: 0 0 var(--space-3);
+    font-size: 1.1rem;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 1rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .chip:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .share-status {
+    min-height: 1.6em;
+    margin: var(--space-2) 0 0;
+    color: var(--muted);
+  }
+</style>

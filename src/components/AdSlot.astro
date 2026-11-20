@@ -1,0 +1,12 @@
+---
+import { adSlotHtml, type Placement } from '../lib/ads';
+import { ads } from '../lib/site-env';
+
+interface Props {
+  placement: Placement;
+}
+
+const html = adSlotHtml(Astro.props.placement, ads);
+---
+
+{html && <Fragment set:html={html} />}

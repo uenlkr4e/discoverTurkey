@@ -1,0 +1,60 @@
+/*
+ * Ad slots reserve their full size before any ad loads, so filled, unfilled and
+ * not-yet-loaded slots all occupy the same space and never shift the layout.
+ * The neutral styling and label keep ads distinct from content and navigation.
+ */
+.ad-slot {
+  margin-block: var(--space-5);
+  padding: var(--space-2) var(--space-2) var(--space-3);
+  background: #f2efe9;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  contain: layout;
+}
+
+.ad-label {
+  margin: 0 0 var(--space-2);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.ad-slot ins {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+}
+
+.ad-slot--incontent ins,
+.ad-slot--footer ins {
+  height: 280px;
+}
+
+@media (min-width: 640px) {
+  .ad-slot--incontent ins,
+  .ad-slot--footer ins {
+    height: 250px;
+  }
+}
+
+/* Sidebar units exist only beside articles on wide screens. */
+.ad-slot--sidebar {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .ad-slot--sidebar {
+    display: block;
+    position: sticky;
+    top: calc(var(--header-h) + 1rem);
+    margin: 0;
+  }
+
+  .ad-slot--sidebar ins {
+    width: 300px;
+    height: 600px;
+  }
+}

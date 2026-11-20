@@ -134,7 +134,10 @@ const files = {
       factsToVerify: ['Fixture fact to verify'],
       ...reviewed,
     },
-    `## Long-distance travel\n\n${filler(200, 4)}\n\n## City transport\n\n${filler(150, 5)}`,
+    // Four sections and over 600 words, so the in-content ad is inserted before the third heading.
+    ['Long-distance travel', 'City transport', 'Ferries', 'Driving']
+      .map((heading, i) => `## ${heading}\n\n${filler(180, 4 + i)}`)
+      .join('\n\n'),
   ),
 
   'guides/money-matters-draft.md': markdown(

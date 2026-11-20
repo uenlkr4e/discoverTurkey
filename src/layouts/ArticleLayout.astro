@@ -1,11 +1,15 @@
 ---
+import AdSlot from '../components/AdSlot.astro';
 import DraftBanner from '../components/DraftBanner.astro';
 import HeroFigure from '../components/HeroFigure.astro';
 import RelatedContent from '../components/RelatedContent.astro';
 import ReviewedBy from '../components/ReviewedBy.astro';
+import ShareButtons from '../components/ShareButtons.astro';
+import { adSlotHtml, insertInContentAd } from '../lib/ads';
 import { getRelatedFor, resolve, type ArticleEntry } from '../lib/collections';
 import { isPublished } from '../lib/content';
 import { absoluteUrl, articleLd, pageTitle, type Crumb } from '../lib/seo';
+import { ads } from '../lib/site-env';
 import { COLLECTION_LABEL } from '../lib/urls';
 import BaseLayout from './BaseLayout.astro';
 
@@ -38,6 +42,8 @@ const pagefindFilters = Object.entries({ type: [type], ...filters }).flatMap(([n
   values.map((value) => `${name}:${value}`),
 );
 const factsToVerify = entry.collection === 'guides' ? entry.data.factsToVerify : [];
+// The in-content ad is placed in the rendered article column (see insertInContentAd).
+const mainHtml = insertInContentAd(await Astro.slots.render('default'), adSlotHtml('incontent', ads));
 ---
 
 <BaseLayout
@@ -62,19 +68,18 @@ const factsToVerify = entry.collection === 'guides' ? entry.data.factsToVerify :
     </header>
     <HeroFigure image={d.heroImage} />
     <div class="article-grid">
-      <div class="article-main">
-        <slot />
-      </div>
+      <div class="article-main" set:html={mainHtml} />
       {
-        Astro.slots.has('sidebar') && (
-          <aside class="article-aside" data-pagefind-ignore>
-            <slot name="sidebar" />
+        ads?.slots.sidebar && (
+          <aside class="article-aside" aria-label="Advertisement" data-pagefind-ignore="all">
+            <AdSlot placement="sidebar" />
           </aside>
         )
       }
     </div>
+    <ShareButtons title={d.title} url={url} contentType={type.toLowerCase()} />
     <RelatedContent items={related} />
-    <slot name="after" />
+    <AdSlot placement="footer" />
   </article>
 </BaseLayout>
 
