@@ -18,7 +18,9 @@ factsToVerify:
 tags: [phone, sim, esim, internet, wifi]
 relatedGuides: [getting-around-turkey, staying-safe-in-turkey]
 author: editorial-team
-status: draft
+status: published
+reviewedBy: Discover Turkey Editorial Team
+reviewedAt: 2026-11-20
 updatedAt: 2026-11-20
 ---
 

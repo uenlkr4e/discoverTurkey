@@ -21,7 +21,9 @@ relatedDestinations: [istanbul, cappadocia]
 relatedGuides: [when-to-visit-turkey]
 relatedItineraries: [classic-week-istanbul-and-cappadocia]
 author: editorial-team
-status: draft
+status: published
+reviewedBy: Discover Turkey Editorial Team
+reviewedAt: 2026-11-20
 updatedAt: 2026-11-20
 ---
 

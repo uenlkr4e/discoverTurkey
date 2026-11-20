@@ -1,7 +1,9 @@
 ---
 title: Cookie policy
 summary: Which cookies and similar technologies Discover Turkey and its advertising and analytics partners use, and how to control them.
-status: draft
+status: published
+reviewedBy: Discover Turkey Editorial Team
+reviewedAt: 2026-11-20
 inSitemap: false
 updatedAt: 2026-11-20
 ---

@@ -53,7 +53,9 @@ relatedDestinations: [istanbul]
 relatedGuides: [when-to-visit-turkey]
 relatedItineraries: [classic-week-istanbul-and-cappadocia, ten-days-of-ancient-history]
 author: editorial-team
-status: draft
+status: published
+reviewedBy: Discover Turkey Editorial Team
+reviewedAt: 2026-11-20
 updatedAt: 2026-11-20
 ---
 

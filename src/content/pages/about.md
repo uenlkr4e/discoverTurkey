@@ -1,7 +1,9 @@
 ---
 title: About Discover Turkey
 summary: Who we are, what this site covers and how we research and review our destination guides, itineraries and travel tips.
-status: draft
+status: published
+reviewedBy: Discover Turkey Editorial Team
+reviewedAt: 2026-11-20
 updatedAt: 2026-11-20
 ---
 
@@ -23,4 +25,4 @@ Discover Turkey is free to use and funded by advertising. Ads are clearly labell
 
 ## Contact
 
-Spotted something out of date, or have a suggestion? Email us at [TO COMPLETE: contact email address]. We read every message and update our guides when things change.
+Spotted something out of date, or have a suggestion? Email us at <discoverturkey@gmail.com>. We read every message and update our guides when things change.

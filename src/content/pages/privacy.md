@@ -1,7 +1,9 @@
 ---
 title: Privacy policy
 summary: How Discover Turkey and its service providers collect and use personal data, including advertising and analytics, and the choices you have.
-status: draft
+status: published
+reviewedBy: Discover Turkey Editorial Team
+reviewedAt: 2026-11-20
 inSitemap: false
 updatedAt: 2026-11-20
 ---
@@ -12,7 +14,7 @@ This policy explains what personal data is processed when you visit Discover Tur
 
 ## Who is responsible
 
-The site is operated by [TO COMPLETE: legal name of the operator], [TO COMPLETE: postal address]. Contact: [TO COMPLETE: contact email address].
+The site is operated by Discover Turkey, Konya, Türkiye. Contact: <discoverturkey@gmail.com>.
 
 ## What we collect and why
 
@@ -33,7 +35,7 @@ Our service providers, Cloudflare and Google, may process data outside your coun
 
 ## Retention
 
-Server and security logs are kept by Cloudflare for a limited period. Analytics data is kept for [TO COMPLETE: the retention period set in Google Analytics, e.g. 14 months]. Advertising data is retained by Google under its own policies.
+Server and security logs are kept by Cloudflare for a limited period. Analytics data is kept for 2 months. Advertising data is retained by Google under its own policies.
 
 ## Your rights
 

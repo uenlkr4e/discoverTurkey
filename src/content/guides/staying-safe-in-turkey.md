@@ -18,7 +18,9 @@ factsToVerify:
 tags: [safety, health, scams, emergencies, earthquakes]
 relatedGuides: [money-and-payments, sim-cards-esims-and-wifi]
 author: editorial-team
-status: draft
+status: published
+reviewedBy: Discover Turkey Editorial Team
+reviewedAt: 2026-11-20
 updatedAt: 2026-11-20
 ---
 

@@ -53,7 +53,9 @@ relatedDestinations: [turquoise-coast]
 relatedGuides: [when-to-visit-turkey]
 relatedItineraries: [a-week-on-the-turquoise-coast]
 author: editorial-team
-status: draft
+status: published
+reviewedBy: Discover Turkey Editorial Team
+reviewedAt: 2026-11-20
 updatedAt: 2026-11-20
 ---
 

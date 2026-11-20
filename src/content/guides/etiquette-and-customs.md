@@ -17,7 +17,9 @@ tags: [etiquette, mosques, culture, ramadan, dress]
 relatedDestinations: [istanbul]
 relatedGuides: [when-to-visit-turkey]
 author: editorial-team
-status: draft
+status: published
+reviewedBy: Discover Turkey Editorial Team
+reviewedAt: 2026-11-20
 updatedAt: 2026-11-20
 ---
 

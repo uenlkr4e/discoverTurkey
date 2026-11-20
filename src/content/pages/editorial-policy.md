@@ -1,7 +1,9 @@
 ---
 title: Editorial policy
 summary: How Discover Turkey researches, reviews and updates its travel content, credits photographs, and keeps advertising separate from editorial.
-status: draft
+status: published
+reviewedBy: Discover Turkey Editorial Team
+reviewedAt: 2026-11-20
 updatedAt: 2026-11-20
 ---
 
@@ -16,7 +18,7 @@ We want every page on Discover Turkey to be accurate, useful and honest about wh
 
 ## Corrections
 
-If you find an error, please tell us at [TO COMPLETE: contact email address]. We correct mistakes promptly and update the page's review date.
+If you find an error, please tell us at <discoverturkey@gmail.com>. We correct mistakes promptly and update the page's review date.
 
 ## Photographs
 
