@@ -1,0 +1,48 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Card from '../../../components/Card.astro';
+import PageIntro from '../../../components/PageIntro.astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getGuideCategoriesWithContent, getGuides, type Guide } from '../../../lib/collections';
+import { pageTitle } from '../../../lib/seo';
+import { guideCategoryHref, hrefFor } from '../../../lib/urls';
+
+export async function getStaticPaths() {
+  const [categories, guides] = await Promise.all([getGuideCategoriesWithContent(), getGuides()]);
+  return categories.map((category) => ({
+    params: { category: category.id },
+    props: { category, guides: guides.filter((g) => g.data.category.id === category.id) },
+  }));
+}
+
+interface Props {
+  category: CollectionEntry<'guideCategories'>;
+  guides: Guide[];
+}
+
+const { category, guides } = Astro.props;
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Travel tips', href: '/guides/' },
+  { name: category.data.name, href: guideCategoryHref(category.id) },
+];
+---
+
+<BaseLayout
+  title={pageTitle(`${category.data.name} tips for Turkey`)}
+  description={category.data.description}
+  crumbs={crumbs}
+>
+  <div class="container">
+    <PageIntro title={`${category.data.name} tips for Turkey`} lede={category.data.description} />
+    <ul class="card-grid">
+      {
+        guides.map((g) => (
+          <li>
+            <Card href={hrefFor(g)} title={g.data.title} summary={g.data.summary} image={g.data.heroImage.src} />
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</BaseLayout>

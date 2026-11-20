@@ -1,0 +1,20 @@
+---
+interface Props {
+  title: string;
+  lede?: string;
+}
+
+const { title, lede } = Astro.props;
+---
+
+<header class="page-intro">
+  <h1>{title}</h1>
+  {lede && <p class="lede">{lede}</p>}
+  <slot />
+</header>
+
+<style>
+  .page-intro {
+    margin-block: var(--space-5) var(--space-5);
+  }
+</style>

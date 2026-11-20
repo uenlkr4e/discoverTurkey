@@ -1,0 +1,47 @@
+---
+import Card from '../../components/Card.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getGuideCategoriesWithContent, getGuides } from '../../lib/collections';
+import { pageTitle } from '../../lib/seo';
+import { guideCategoryHref, hrefFor } from '../../lib/urls';
+
+const [categories, guides] = await Promise.all([getGuideCategoriesWithContent(), getGuides()]);
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Travel tips', href: '/guides/' },
+];
+---
+
+<BaseLayout
+  title={pageTitle('Turkey travel tips and planning guides')}
+  description="Practical guides to planning a trip to Turkey: transport, money, mobile data, etiquette, safety and when to go."
+  crumbs={crumbs}
+  noindex={categories.length === 0}
+>
+  <div class="container">
+    <PageIntro
+      title="Travel tips"
+      lede="Practical advice for planning your trip, checked against official sources by our editors."
+    />
+    {categories.length === 0 && <p>Our planning guides are being reviewed and will appear here soon.</p>}
+    {
+      categories.map((category) => (
+        <section class="section" aria-labelledby={`cat-${category.id}`}>
+          <h2 id={`cat-${category.id}`}>
+            <a href={guideCategoryHref(category.id)}>{category.data.name}</a>
+          </h2>
+          <ul class="card-grid">
+            {guides
+              .filter((g) => g.data.category.id === category.id)
+              .map((g) => (
+                <li>
+                  <Card href={hrefFor(g)} title={g.data.title} summary={g.data.summary} image={g.data.heroImage.src} />
+                </li>
+              ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+</BaseLayout>

@@ -1,0 +1,18 @@
+- id: transport
+  name: Transport
+  description: Flights, buses, trains, ferries and city transport, and how to choose between them.
+- id: money
+  name: Money
+  description: Currency, cards, cash machines, tipping and budgeting for a trip to Turkey.
+- id: connectivity
+  name: Connectivity
+  description: SIM cards, eSIMs, mobile data and Wi-Fi, so you can stay online while you travel.
+- id: etiquette
+  name: Etiquette
+  description: Customs, dress codes for mosques, greetings and the everyday courtesies that locals appreciate.
+- id: safety
+  name: Safety
+  description: Practical advice on health, scams, emergencies and staying safe, with links to official sources.
+- id: seasons
+  name: Seasons
+  description: When to visit, what the weather is like by region, and how holidays and festivals affect travel.

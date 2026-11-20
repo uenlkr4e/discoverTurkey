@@ -1,0 +1,137 @@
+---
+import { render } from 'astro:content';
+import FactBox from '../../components/FactBox.astro';
+import MapLinks from '../../components/MapLinks.astro';
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { getDestinations, resolve, type Destination } from '../../lib/collections';
+import { capitalize } from '../../lib/format';
+import { renderMarkdown } from '../../lib/markdown';
+import { SEASONS } from '../../lib/season';
+import { absoluteUrl, touristDestinationLd } from '../../lib/seo';
+import { interestHref, regionHref } from '../../lib/urls';
+
+export async function getStaticPaths() {
+  const destinations = await getDestinations();
+  return destinations.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+interface Props {
+  entry: Destination;
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+const [region, interests] = await Promise.all([resolve(d.region), Promise.all(d.interests.map(resolve))]);
+
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Destinations', href: '/destinations/' },
+  { name: d.title, href: Astro.url.pathname },
+];
+const place = touristDestinationLd({
+  name: d.title,
+  description: d.seoDescription ?? d.summary,
+  url: absoluteUrl(Astro.url.pathname, Astro.site!),
+  lat: d.coordinates.lat,
+  lng: d.coordinates.lng,
+});
+---
+
+<ArticleLayout
+  entry={entry}
+  eyebrow={`${region.data.name} region`}
+  crumbs={crumbs}
+  jsonLd={[place]}
+  filters={{ region: [region.data.name], interest: interests.map((i) => i.data.name) }}
+>
+  <FactBox
+    facts={[
+      { label: 'Region', value: region.data.name, href: regionHref(region.id) },
+      { label: 'Best time to visit', value: d.bestTimeToVisit.summary },
+      { label: 'Suggested stay', value: d.suggestedDuration },
+    ]}
+  />
+
+  <div class="prose">
+    <Content />
+  </div>
+
+  <section aria-labelledby="best-time">
+    <h2 id="best-time">Best time to visit</h2>
+    <p class="prose">{d.bestTimeToVisit.summary}</p>
+    <dl class="seasons">
+      {
+        SEASONS.map((season) => (
+          <div>
+            <dt>{capitalize(season)}</dt>
+            <dd>{d.bestTimeToVisit[season]}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <section aria-labelledby="attractions">
+    <h2 id="attractions">Top attractions and things to do</h2>
+    {
+      d.attractions.map((attraction) => (
+        <>
+          <h3>{attraction.name}</h3>
+          <div class="prose" set:html={renderMarkdown(attraction.description)} />
+        </>
+      ))
+    }
+  </section>
+
+  <section aria-labelledby="getting-there">
+    <h2 id="getting-there">Getting there</h2>
+    <div class="prose" set:html={renderMarkdown(d.gettingThere)} />
+  </section>
+
+  <section aria-labelledby="getting-around">
+    <h2 id="getting-around">Getting around</h2>
+    <div class="prose" set:html={renderMarkdown(d.gettingAround)} />
+  </section>
+
+  <section aria-labelledby="food">
+    <h2 id="food">Food and local experiences</h2>
+    <div class="prose" set:html={renderMarkdown(d.foodAndExperiences)} />
+  </section>
+
+  <section aria-labelledby="map">
+    <h2 id="map">Map</h2>
+    <MapLinks name={d.title} lat={d.coordinates.lat} lng={d.coordinates.lng} />
+  </section>
+
+  <section aria-labelledby="good-for">
+    <h2 id="good-for">Good for</h2>
+    <ul class="chip-list">
+      {interests.map((i) => <li><a href={interestHref(i.id)}>{i.data.name}</a></li>)}
+    </ul>
+  </section>
+</ArticleLayout>
+
+<style>
+  .seasons {
+    display: grid;
+    gap: var(--space-3);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    margin: 0;
+  }
+
+  .seasons div {
+    padding: var(--space-3);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+
+  dt {
+    font-weight: 700;
+  }
+
+  dd {
+    margin: var(--space-1) 0 0;
+  }
+</style>

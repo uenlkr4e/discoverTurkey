@@ -1,0 +1,109 @@
+---
+import DraftBanner from '../components/DraftBanner.astro';
+import HeroFigure from '../components/HeroFigure.astro';
+import RelatedContent from '../components/RelatedContent.astro';
+import ReviewedBy from '../components/ReviewedBy.astro';
+import { getRelatedFor, resolve, type ArticleEntry } from '../lib/collections';
+import { isPublished } from '../lib/content';
+import { absoluteUrl, articleLd, pageTitle, type Crumb } from '../lib/seo';
+import { COLLECTION_LABEL } from '../lib/urls';
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  entry: ArticleEntry;
+  eyebrow: string;
+  crumbs: Crumb[];
+  /** Extra JSON-LD, e.g. TouristDestination; Article is added here. */
+  jsonLd?: Record<string, unknown>[];
+  /** Search filters for Pagefind, e.g. { region: ['Aegean'] }. */
+  filters?: Record<string, string[]>;
+}
+
+const { entry, eyebrow, crumbs, jsonLd = [], filters = {} } = Astro.props;
+const d = entry.data;
+const [author, related] = await Promise.all([resolve(d.author), getRelatedFor(entry)]);
+const description = d.seoDescription ?? d.summary;
+const url = absoluteUrl(Astro.url.pathname, Astro.site!);
+const type = COLLECTION_LABEL[entry.collection];
+const article = articleLd({
+  headline: d.title,
+  description,
+  url,
+  authorName: author.data.name,
+  updatedAt: d.updatedAt,
+  reviewedAt: d.reviewedAt,
+  publishedAt: d.publishedAt,
+});
+const pagefindFilters = Object.entries({ type: [type], ...filters }).flatMap(([name, values]) =>
+  values.map((value) => `${name}:${value}`),
+);
+const factsToVerify = entry.collection === 'guides' ? entry.data.factsToVerify : [];
+---
+
+<BaseLayout
+  title={pageTitle(d.title, d.seoTitle)}
+  description={description}
+  crumbs={crumbs}
+  image={d.heroImage.src}
+  imageAlt={d.heroImage.alt}
+  ogType="article"
+  jsonLd={[article, ...jsonLd]}
+  noindex={!isPublished(d)}
+>
+  {!isPublished(d) && <DraftBanner slot="banner" status={d.status} factsToVerify={factsToVerify} />}
+  <article class="container article" data-pagefind-body>
+    {pagefindFilters.map((f) => <span hidden data-pagefind-filter={f}></span>)}
+    <span hidden data-pagefind-meta={`type:${type}`}></span>
+    <header class="article-head">
+      <p class="eyebrow">{eyebrow}</p>
+      <h1>{d.title}</h1>
+      <p class="lede">{d.summary}</p>
+      <ReviewedBy authorName={author.data.name} reviewedBy={d.reviewedBy} reviewedAt={d.reviewedAt} />
+    </header>
+    <HeroFigure image={d.heroImage} />
+    <div class="article-grid">
+      <div class="article-main">
+        <slot />
+      </div>
+      {
+        Astro.slots.has('sidebar') && (
+          <aside class="article-aside" data-pagefind-ignore>
+            <slot name="sidebar" />
+          </aside>
+        )
+      }
+    </div>
+    <RelatedContent items={related} />
+    <slot name="after" />
+  </article>
+</BaseLayout>
+
+<style>
+  .article-head {
+    margin-top: var(--space-5);
+  }
+
+  .article-grid {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  /* The sidebar column exists only on wide screens. */
+  .article-aside {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .article-grid:has(.article-aside) {
+      grid-template-columns: minmax(0, 1fr) 300px;
+    }
+
+    .article-aside {
+      display: block;
+    }
+  }
+
+  .article-main > :global(:first-child) {
+    margin-top: 0;
+  }
+</style>

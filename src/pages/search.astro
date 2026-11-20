@@ -1,0 +1,204 @@
+---
+import PageIntro from '../components/PageIntro.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { pageTitle } from '../lib/seo';
+
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Search', href: '/search/' },
+];
+---
+
+<BaseLayout
+  title={pageTitle('Search')}
+  description="Search Discover Turkey destination guides, travel tips and itineraries."
+  crumbs={crumbs}
+  noindex
+>
+  <div class="container">
+    <PageIntro title="Search" />
+    <form id="search-form" class="search-form" role="search" action="/search/" method="get">
+      <div class="field grow">
+        <label for="q">Search destinations and guides</label>
+        <input id="q" name="q" type="search" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label for="type">Show</label>
+        <select id="type" name="type">
+          <option value="">Everything</option>
+          <option value="Destination">Destinations</option>
+          <option value="Guide">Travel tips</option>
+          <option value="Itinerary">Itineraries</option>
+        </select>
+      </div>
+      <button class="button" type="submit">Search</button>
+    </form>
+
+    <p id="search-status" class="status" role="status" aria-live="polite"></p>
+    <ol id="search-results" class="results"></ol>
+
+    <noscript>
+      <p>
+        Search needs JavaScript. You can <a href="/destinations/">browse destinations</a> or
+        <a href="/guides/">travel tips</a> instead.
+      </p>
+    </noscript>
+  </div>
+</BaseLayout>
+
+<script>
+  interface PagefindData {
+    url: string;
+    excerpt: string;
+    meta: { title?: string; type?: string };
+  }
+  interface Pagefind {
+    search: (
+      term: string,
+      options?: { filters?: Record<string, string> },
+    ) => Promise<{ results: { data: () => Promise<PagefindData> }[] }>;
+  }
+
+  const MAX_RESULTS = 20;
+  const form = document.getElementById('search-form') as HTMLFormElement;
+  const input = document.getElementById('q') as HTMLInputElement;
+  const type = document.getElementById('type') as HTMLSelectElement;
+  const status = document.getElementById('search-status') as HTMLElement;
+  const list = document.getElementById('search-results') as HTMLOListElement;
+
+  let pagefind: Promise<Pagefind> | undefined;
+  // The index is generated after `astro build`, so it is loaded at runtime rather than bundled.
+  const loadPagefind = () => {
+    const path = '/pagefind/pagefind.js';
+    pagefind ??= import(/* @vite-ignore */ path) as Promise<Pagefind>;
+    return pagefind;
+  };
+
+  /** Rebuild a Pagefind excerpt keeping only its text and <mark> highlights. */
+  function excerptNodes(excerpt: string): Node[] {
+    const parsed = new DOMParser().parseFromString(excerpt, 'text/html').body;
+    return [...parsed.childNodes].map((node) => {
+      if (node.nodeName === 'MARK') {
+        const mark = document.createElement('mark');
+        mark.textContent = node.textContent;
+        return mark;
+      }
+      return document.createTextNode(node.textContent ?? '');
+    });
+  }
+
+  function renderResult(item: PagefindData): HTMLLIElement {
+    const li = document.createElement('li');
+    if (item.meta.type) {
+      const eyebrow = document.createElement('p');
+      eyebrow.className = 'eyebrow';
+      eyebrow.textContent = item.meta.type;
+      li.append(eyebrow);
+    }
+    const heading = document.createElement('h2');
+    const link = document.createElement('a');
+    link.href = item.url;
+    link.textContent = item.meta.title ?? item.url;
+    heading.append(link);
+    const excerpt = document.createElement('p');
+    excerpt.append(...excerptNodes(item.excerpt));
+    li.append(heading, excerpt);
+    return li;
+  }
+
+  async function run(term: string, filter: string) {
+    list.replaceChildren();
+    if (!term.trim()) {
+      status.textContent = '';
+      return;
+    }
+    status.textContent = 'Searching…';
+    try {
+      const search = await (await loadPagefind()).search(term, filter ? { filters: { type: filter } } : undefined);
+      const items = await Promise.all(search.results.slice(0, MAX_RESULTS).map((r) => r.data()));
+      list.replaceChildren(...items.map(renderResult));
+      const count = search.results.length;
+      status.textContent = `${count} result${count === 1 ? '' : 's'} for “${term}”`;
+      document.dispatchEvent(new CustomEvent('site:search', { detail: { term, count } }));
+    } catch (error) {
+      console.error('Search failed', error);
+      status.textContent = 'Search is unavailable right now. Try browsing destinations instead.';
+    }
+  }
+
+  const params = new URLSearchParams(location.search);
+  input.value = params.get('q') ?? '';
+  type.value = params.get('type') ?? '';
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const url = new URL(location.href);
+    url.searchParams.set('q', input.value);
+    if (type.value) url.searchParams.set('type', type.value);
+    else url.searchParams.delete('type');
+    history.replaceState(null, '', url);
+    run(input.value, type.value);
+  });
+
+  if (input.value) run(input.value, type.value);
+</script>
+
+<style>
+  .search-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--space-3);
+  }
+
+  .field {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .grow {
+    flex: 1 1 18rem;
+  }
+
+  label {
+    font-weight: 600;
+  }
+
+  input,
+  select {
+    min-height: 44px;
+    padding: 0 1rem;
+    border: 1px solid var(--muted);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+  }
+
+  .status {
+    margin-top: var(--space-4);
+    color: var(--muted);
+  }
+
+  .results {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-width: var(--measure);
+  }
+
+  .results :global(li) {
+    padding-block: var(--space-4);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .results :global(h2) {
+    margin: 0 0 var(--space-2);
+    font-size: 1.35rem;
+  }
+
+  .results :global(mark) {
+    background: #fff1b8;
+    color: inherit;
+  }
+</style>

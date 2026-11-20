@@ -1,0 +1,89 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Card from '../../components/Card.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import {
+  getDestinations,
+  getInterestsWithContent,
+  getItineraries,
+  type Destination,
+  type Itinerary,
+} from '../../lib/collections';
+import { pageTitle } from '../../lib/seo';
+import { hrefFor, interestHref } from '../../lib/urls';
+
+export async function getStaticPaths() {
+  const [interests, destinations, itineraries] = await Promise.all([
+    getInterestsWithContent(),
+    getDestinations(),
+    getItineraries(),
+  ]);
+  const tagged = <T extends Destination | Itinerary>(list: T[], id: string) =>
+    list.filter((e) => e.data.interests.some((i) => i.id === id));
+  return interests.map((interest) => ({
+    params: { interest: interest.id },
+    props: {
+      interest,
+      destinations: tagged(destinations, interest.id),
+      itineraries: tagged(itineraries, interest.id),
+    },
+  }));
+}
+
+interface Props {
+  interest: CollectionEntry<'interests'>;
+  destinations: Destination[];
+  itineraries: Itinerary[];
+}
+
+const { interest, destinations, itineraries } = Astro.props;
+const title = `${interest.data.name} in Turkey`;
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Experiences', href: '/interests/' },
+  { name: interest.data.name, href: interestHref(interest.id) },
+];
+---
+
+<BaseLayout title={pageTitle(title)} description={interest.data.description} crumbs={crumbs}>
+  <div class="container">
+    <PageIntro title={title} lede={interest.data.description} />
+
+    {
+      destinations.length > 0 && (
+        <section class="section" aria-labelledby="destinations">
+          <h2 id="destinations">Destinations</h2>
+          <ul class="card-grid">
+            {destinations.map((d) => (
+              <li>
+                <Card href={hrefFor(d)} title={d.data.title} summary={d.data.summary} image={d.data.heroImage.src} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      itineraries.length > 0 && (
+        <section class="section" aria-labelledby="itineraries">
+          <h2 id="itineraries">Itineraries</h2>
+          <ul class="card-grid">
+            {itineraries.map((it) => (
+              <li>
+                <Card
+                  href={hrefFor(it)}
+                  title={it.data.title}
+                  summary={it.data.summary}
+                  image={it.data.heroImage.src}
+                  eyebrow={`${it.data.days} days`}
+                />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </div>
+</BaseLayout>

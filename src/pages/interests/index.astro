@@ -1,0 +1,25 @@
+---
+import PageIntro from '../../components/PageIntro.astro';
+import InterestTiles from '../../components/InterestTiles.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getInterestsWithContent } from '../../lib/collections';
+import { pageTitle } from '../../lib/seo';
+
+const interests = await getInterestsWithContent();
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Experiences', href: '/interests/' },
+];
+---
+
+<BaseLayout
+  title={pageTitle('Things to do in Turkey by interest')}
+  description="Find destinations and itineraries in Turkey for history, beaches, nature, food, culture and family travel."
+  crumbs={crumbs}
+  noindex={interests.length === 0}
+>
+  <div class="container">
+    <PageIntro title="Experiences" lede="Choose what you love doing and we'll show you where to go." />
+    <InterestTiles interests={interests} headingLevel={2} />
+  </div>
+</BaseLayout>

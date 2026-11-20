@@ -1,0 +1,17 @@
+---
+interface Props {
+  name: string;
+  lat: number;
+  lng: number;
+}
+
+// Plain links instead of an embedded map: no third-party scripts and no layout shift.
+const { name, lat, lng } = Astro.props;
+const google = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+const osm = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=11/${lat}/${lng}`;
+---
+
+<ul class="chip-list">
+  <li><a href={google} rel="noopener">{name} on Google Maps</a></li>
+  <li><a href={osm} rel="noopener">{name} on OpenStreetMap</a></li>
+</ul>

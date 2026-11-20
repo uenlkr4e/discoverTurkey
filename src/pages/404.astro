@@ -1,0 +1,31 @@
+---
+import PageIntro from '../components/PageIntro.astro';
+import SearchBox from '../components/SearchBox.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { pageTitle } from '../lib/seo';
+---
+
+<BaseLayout
+  title={pageTitle('Page not found')}
+  description="The page you were looking for could not be found."
+  noindex
+>
+  <div class="container">
+    <PageIntro
+      title="Page not found"
+      lede="The page may have moved, or the address may be mistyped. Try searching, or start from one of these pages."
+    />
+    <SearchBox id="notfound-search" />
+    <ul class="chip-list links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/destinations/">Destinations</a></li>
+      <li><a href="/guides/">Travel tips</a></li>
+    </ul>
+  </div>
+</BaseLayout>
+
+<style>
+  .links {
+    margin-top: var(--space-5);
+  }
+</style>

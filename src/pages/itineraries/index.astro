@@ -1,0 +1,47 @@
+---
+import Card from '../../components/Card.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getItineraries } from '../../lib/collections';
+import { pageTitle } from '../../lib/seo';
+import { hrefFor } from '../../lib/urls';
+
+const itineraries = await getItineraries();
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Itineraries', href: '/itineraries/' },
+];
+---
+
+<BaseLayout
+  title={pageTitle('Turkey itineraries')}
+  description="Sample itineraries for Turkey, from a classic week in Istanbul and Cappadocia to longer trips along the coast."
+  crumbs={crumbs}
+  noindex={itineraries.length === 0}
+>
+  <div class="container">
+    <PageIntro
+      title="Itineraries"
+      lede="Day-by-day trip plans for different trip lengths and interests. Use them as a starting point and adapt."
+    />
+    {
+      itineraries.length > 0 ? (
+        <ul class="card-grid">
+          {itineraries.map((it) => (
+            <li>
+              <Card
+                href={hrefFor(it)}
+                title={it.data.title}
+                summary={it.data.summary}
+                image={it.data.heroImage.src}
+                eyebrow={`${it.data.days} days`}
+              />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>Our first itineraries are being reviewed and will appear here soon.</p>
+      )
+    }
+  </div>
+</BaseLayout>

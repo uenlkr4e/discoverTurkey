@@ -1,0 +1,22 @@
+# Turkey's seven geographical regions. A region page is only built once it has a published destination.
+- id: marmara
+  name: Marmara
+  description: Istanbul and the lands around the Sea of Marmara, where Europe meets Asia across the Bosphorus.
+- id: aegean
+  name: Aegean
+  description: Turkey's western coast and its hinterland, with İzmir, ancient Ephesus and olive-covered hills.
+- id: mediterranean
+  name: Mediterranean
+  description: The southern coast from the Turquoise Coast to Antalya and beyond, backed by the Taurus Mountains.
+- id: central-anatolia
+  name: Central Anatolia
+  description: The high plateau at the heart of the country, home to Ankara and the rock landscapes of Cappadocia.
+- id: black-sea
+  name: Black Sea
+  description: A green, mountainous northern coast known for its rainfall, tea plantations and highland villages.
+- id: eastern-anatolia
+  name: Eastern Anatolia
+  description: The country's highest and most mountainous region, stretching east towards the borders with Iran and Armenia.
+- id: southeastern-anatolia
+  name: Southeastern Anatolia
+  description: Upper Mesopotamia, with the Euphrates and Tigris valleys and some of the world's oldest archaeological sites.

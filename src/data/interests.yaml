@@ -1,0 +1,18 @@
+- id: history
+  name: History
+  description: Ancient cities, Byzantine churches, Ottoman mosques and the museums that tell their stories.
+- id: beaches
+  name: Beaches
+  description: Sandy bays, sheltered coves and coastal towns along the Aegean and Mediterranean shores.
+- id: nature
+  name: Nature
+  description: Hiking trails, valleys, mountains and national parks for travellers who want to get outdoors.
+- id: food
+  name: Food
+  description: Regional cooking, markets, street food and the places where local dishes are at their best.
+- id: culture
+  name: Culture
+  description: Bazaars, crafts, music, festivals and everyday life in Turkey's cities and villages.
+- id: family
+  name: Family
+  description: Destinations and activities that work well for travelling with children of different ages.

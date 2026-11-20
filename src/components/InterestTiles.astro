@@ -1,0 +1,73 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { interestHref } from '../lib/urls';
+
+interface Props {
+  interests: CollectionEntry<'interests'>[];
+  headingLevel?: 2 | 3;
+}
+
+const { interests, headingLevel = 3 } = Astro.props;
+const Heading = `h${headingLevel}` as 'h2' | 'h3';
+---
+
+<ul class="tiles">
+  {
+    interests.map((interest) => (
+      <li>
+        <Heading class="tile-title">
+          <a href={interestHref(interest.id)}>{interest.data.name}</a>
+        </Heading>
+        <p>{interest.data.description}</p>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .tiles {
+    display: grid;
+    gap: var(--space-3);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    position: relative;
+    padding: var(--space-4);
+    background: var(--accent-soft);
+    border-radius: var(--radius);
+  }
+
+  li:focus-within {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  .tile-title {
+    margin: 0 0 var(--space-2);
+    font-size: 1.3rem;
+  }
+
+  .tile-title a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .tile-title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .tile-title a:focus-visible {
+    outline: none;
+  }
+
+  p {
+    margin: 0;
+    color: var(--muted);
+  }
+</style>

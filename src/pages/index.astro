@@ -1,0 +1,164 @@
+---
+import Card from '../components/Card.astro';
+import InterestTiles from '../components/InterestTiles.astro';
+import SearchBox from '../components/SearchBox.astro';
+import { SITE } from '../config/site';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import {
+  getDestinations,
+  getGuides,
+  getInterestsWithContent,
+  getItineraries,
+  getRegionsWithContent,
+} from '../lib/collections';
+import { seasonFor } from '../lib/season';
+import { organizationLd, websiteLd } from '../lib/seo';
+import { hrefFor, regionHref } from '../lib/urls';
+
+const [destinations, guides, itineraries, interests, regions] = await Promise.all([
+  getDestinations(),
+  getGuides(),
+  getItineraries(),
+  getInterestsWithContent(),
+  getRegionsWithContent(),
+]);
+
+// Computed at build time; a scheduled weekly rebuild keeps it current.
+const season = seasonFor(new Date());
+const featured = destinations.filter((d) => d.data.featured).slice(0, 6);
+const seasonal = destinations.filter((d) => d.data.seasonalHighlight?.season === season);
+const site = Astro.site!;
+---
+
+<BaseLayout
+  title={`${SITE.name}: ${SITE.tagline}`}
+  description={SITE.description}
+  image={featured[0]?.data.heroImage.src}
+  imageAlt={featured[0]?.data.heroImage.alt}
+  jsonLd={[websiteLd(site), organizationLd(site)]}
+>
+  <section class="hero">
+    <div class="container">
+      <h1>{SITE.tagline}</h1>
+      <p class="lede">
+        Destination guides, day-by-day itineraries and practical advice for planning your trip, all reviewed by our
+        editors.
+      </p>
+      <SearchBox id="home-search" />
+    </div>
+  </section>
+
+  <div class="container">
+    {
+      featured.length > 0 && (
+        <section class="section" aria-labelledby="featured">
+          <h2 id="featured">Featured destinations</h2>
+          <ul class="card-grid">
+            {featured.map((d) => (
+              <li>
+                <Card href={hrefFor(d)} title={d.data.title} summary={d.data.summary} image={d.data.heroImage.src} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      seasonal.length > 0 && (
+        <section class="section" aria-labelledby="seasonal">
+          <h2 id="seasonal">Where to go in {season}</h2>
+          <ul class="card-grid">
+            {seasonal.map((d) => (
+              <li>
+                <Card
+                  href={hrefFor(d)}
+                  title={d.data.title}
+                  summary={d.data.seasonalHighlight!.text}
+                  image={d.data.heroImage.src}
+                />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      interests.length > 0 && (
+        <section class="section" aria-labelledby="interests">
+          <h2 id="interests">Browse by interest</h2>
+          <InterestTiles interests={interests} />
+        </section>
+      )
+    }
+
+    {
+      regions.length > 0 && (
+        <section class="section" aria-labelledby="regions">
+          <h2 id="regions">Browse by region</h2>
+          <ul class="chip-list">
+            {regions.map((r) => (
+              <li>
+                <a href={regionHref(r.id)}>{r.data.name}</a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      guides.length > 0 && (
+        <section class="section" aria-labelledby="plan">
+          <h2 id="plan">Plan your trip</h2>
+          <ul class="card-grid">
+            {guides.slice(0, 6).map((g) => (
+              <li>
+                <Card href={hrefFor(g)} title={g.data.title} summary={g.data.summary} />
+              </li>
+            ))}
+          </ul>
+          <p>
+            <a href="/guides/">All travel tips</a>
+          </p>
+        </section>
+      )
+    }
+
+    {
+      itineraries.length > 0 && (
+        <section class="section" aria-labelledby="itineraries">
+          <h2 id="itineraries">Popular itineraries</h2>
+          <ul class="card-grid">
+            {itineraries.slice(0, 3).map((it) => (
+              <li>
+                <Card
+                  href={hrefFor(it)}
+                  title={it.data.title}
+                  summary={it.data.summary}
+                  image={it.data.heroImage.src}
+                  eyebrow={`${it.data.days} days`}
+                />
+              </li>
+            ))}
+          </ul>
+          <p>
+            <a href="/itineraries/">All itineraries</a>
+          </p>
+        </section>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding-block: var(--space-6);
+    background: linear-gradient(180deg, var(--accent-soft), var(--paper));
+  }
+
+  .hero h1 {
+    max-width: 18ch;
+  }
+</style>

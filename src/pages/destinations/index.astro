@@ -1,0 +1,78 @@
+---
+import Card from '../../components/Card.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getDestinations, getInterestsWithContent, getRegionsWithContent } from '../../lib/collections';
+import { pageTitle } from '../../lib/seo';
+import { hrefFor, interestHref, regionHref } from '../../lib/urls';
+
+const [destinations, regions, interests] = await Promise.all([
+  getDestinations(),
+  getRegionsWithContent(),
+  getInterestsWithContent(),
+]);
+const regionNames = new Map(regions.map((r) => [r.id, r.data.name]));
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Destinations', href: '/destinations/' },
+];
+---
+
+<BaseLayout
+  title={pageTitle('Destinations in Turkey')}
+  description="Explore Turkey's top destinations by region and interest, from Istanbul and Cappadocia to the Aegean and Mediterranean coasts."
+  crumbs={crumbs}
+  noindex={destinations.length === 0}
+>
+  <div class="container">
+    <PageIntro
+      title="Destinations in Turkey"
+      lede="Where to go, what to see and how long to stay, with guides reviewed by our editors."
+    />
+
+    {
+      regions.length > 0 && (
+        <section class="section" aria-labelledby="by-region">
+          <h2 id="by-region">Browse by region</h2>
+          <ul class="chip-list">
+            {regions.map((r) => <li><a href={regionHref(r.id)}>{r.data.name}</a></li>)}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      interests.length > 0 && (
+        <section class="section" aria-labelledby="by-interest">
+          <h2 id="by-interest">Browse by interest</h2>
+          <ul class="chip-list">
+            {interests.map((i) => <li><a href={interestHref(i.id)}>{i.data.name}</a></li>)}
+          </ul>
+        </section>
+      )
+    }
+
+    <section class="section" aria-labelledby="all-destinations">
+      <h2 id="all-destinations">All destinations</h2>
+      {
+        destinations.length > 0 ? (
+          <ul class="card-grid">
+            {destinations.map((d) => (
+              <li>
+                <Card
+                  href={hrefFor(d)}
+                  title={d.data.title}
+                  summary={d.data.summary}
+                  image={d.data.heroImage.src}
+                  eyebrow={regionNames.get(d.data.region.id)}
+                />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>Our first destination guides are being reviewed and will appear here soon.</p>
+        )
+      }
+    </section>
+  </div>
+</BaseLayout>

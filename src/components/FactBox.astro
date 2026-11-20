@@ -1,0 +1,49 @@
+---
+interface Fact {
+  label: string;
+  value: string;
+  href?: string;
+}
+
+interface Props {
+  facts: Fact[];
+}
+
+const { facts } = Astro.props;
+---
+
+<dl class="facts">
+  {
+    facts.map((fact) => (
+      <div>
+        <dt>{fact.label}</dt>
+        <dd>{fact.href ? <a href={fact.href}>{fact.value}</a> : fact.value}</dd>
+      </div>
+    ))
+  }
+</dl>
+
+<style>
+  .facts {
+    display: grid;
+    gap: var(--space-3);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+    margin: 0 0 var(--space-5);
+    padding: var(--space-4);
+    background: var(--sand);
+    border-radius: var(--radius);
+  }
+
+  dt {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  dd {
+    margin: var(--space-1) 0 0;
+    font-weight: 600;
+  }
+</style>

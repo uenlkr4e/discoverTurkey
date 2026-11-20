@@ -1,0 +1,36 @@
+---
+import { formatDate, isoDate } from '../lib/format';
+
+interface Props {
+  authorName: string;
+  reviewedBy?: string;
+  reviewedAt?: Date;
+}
+
+const { authorName, reviewedBy, reviewedAt } = Astro.props;
+---
+
+<p class="byline">
+  <span>By {authorName}</span>
+  <span aria-hidden="true">·</span>
+  {
+    reviewedBy && reviewedAt ? (
+      <span>
+        Last reviewed <time datetime={isoDate(reviewedAt)}>{formatDate(reviewedAt)}</time> by {reviewedBy}
+      </span>
+    ) : (
+      <span>Not yet reviewed</span>
+    )
+  }
+</p>
+
+<style>
+  .byline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-2);
+    margin: 0 0 var(--space-4);
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+</style>

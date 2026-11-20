@@ -1,0 +1,45 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import DraftBanner from '../components/DraftBanner.astro';
+import PageIntro from '../components/PageIntro.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getPages } from '../lib/collections';
+import { isPublished } from '../lib/content';
+import { formatDate, isoDate } from '../lib/format';
+import { pageTitle } from '../lib/seo';
+
+export async function getStaticPaths() {
+  const pages = await getPages();
+  return pages.map((entry) => ({ params: { page: entry.id }, props: { entry } }));
+}
+
+interface Props {
+  entry: CollectionEntry<'pages'>;
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: d.title, href: Astro.url.pathname },
+];
+---
+
+<BaseLayout title={pageTitle(d.title)} description={d.summary} crumbs={crumbs} noindex={!isPublished(d)}>
+  {!isPublished(d) && <DraftBanner slot="banner" status={d.status} />}
+  <div class="container">
+    <PageIntro title={d.title}>
+      <p class="updated">Last updated <time datetime={isoDate(d.updatedAt)}>{formatDate(d.updatedAt)}</time></p>
+    </PageIntro>
+    <div class="prose">
+      <Content />
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .updated {
+    color: var(--muted);
+  }
+</style>

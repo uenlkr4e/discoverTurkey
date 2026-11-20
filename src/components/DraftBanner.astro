@@ -1,0 +1,45 @@
+---
+interface Props {
+  status: string;
+  factsToVerify?: string[];
+}
+
+const { status, factsToVerify = [] } = Astro.props;
+---
+
+<aside class="draft-banner" aria-label="Draft preview">
+  <div class="container">
+    <p>
+      <strong>Draft preview</strong> · status: {status}. This page is not visible on the live site.
+    </p>
+    {
+      factsToVerify.length > 0 && (
+        <details>
+          <summary>Facts to verify before publishing ({factsToVerify.length})</summary>
+          <ul>{factsToVerify.map((fact) => <li>{fact}</li>)}</ul>
+        </details>
+      )
+    }
+  </div>
+</aside>
+
+<style>
+  .draft-banner {
+    padding-block: var(--space-3);
+    background: #fff4d6;
+    border-bottom: 2px solid #8a6100;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  summary {
+    margin-top: var(--space-2);
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-weight: 600;
+  }
+</style>

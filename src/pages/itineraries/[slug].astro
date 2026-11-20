@@ -1,0 +1,101 @@
+---
+import { render } from 'astro:content';
+import FactBox from '../../components/FactBox.astro';
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { getDestinations, getItineraries, resolve, type Itinerary } from '../../lib/collections';
+import { renderMarkdown } from '../../lib/markdown';
+import { hrefFor, interestHref } from '../../lib/urls';
+
+export async function getStaticPaths() {
+  const itineraries = await getItineraries();
+  return itineraries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+interface Props {
+  entry: Itinerary;
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+const [interests, visible] = await Promise.all([Promise.all(d.interests.map(resolve)), getDestinations()]);
+// Only link stops to destinations that are actually built.
+const visibleById = new Map(visible.map((dest) => [dest.id, dest]));
+const stops = [...d.stops].sort((a, b) => a.day - b.day).map((stop) => ({
+  ...stop,
+  destination: visibleById.get(stop.destination.id),
+}));
+
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Itineraries', href: '/itineraries/' },
+  { name: d.title, href: Astro.url.pathname },
+];
+---
+
+<ArticleLayout
+  entry={entry}
+  eyebrow={`${d.days}-day itinerary`}
+  crumbs={crumbs}
+  filters={{ interest: interests.map((i) => i.data.name) }}
+>
+  <FactBox
+    facts={[
+      { label: 'Trip length', value: `${d.days} days` },
+      { label: 'Good for', value: interests.map((i) => i.data.name).join(', ') },
+    ]}
+  />
+
+  <div class="prose">
+    <Content />
+  </div>
+
+  <section aria-labelledby="day-by-day">
+    <h2 id="day-by-day">Day by day</h2>
+    <ol class="stops">
+      {
+        stops.map((stop) => (
+          <li>
+            <h3>
+              Day {stop.day}: {stop.title}
+            </h3>
+            <div class="prose" set:html={renderMarkdown(stop.plan)} />
+            {stop.destination && (
+              <p>
+                <a href={hrefFor(stop.destination)}>Read our {stop.destination.data.title} guide</a>
+              </p>
+            )}
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section aria-labelledby="good-for">
+    <h2 id="good-for">Good for</h2>
+    <ul class="chip-list">
+      {interests.map((i) => <li><a href={interestHref(i.id)}>{i.data.name}</a></li>)}
+    </ul>
+  </section>
+</ArticleLayout>
+
+<style>
+  .stops {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .stops li {
+    padding-left: var(--space-4);
+    border-left: 3px solid var(--accent);
+  }
+
+  .stops li + li {
+    margin-top: var(--space-4);
+  }
+
+  .stops h3 {
+    margin-top: 0;
+  }
+</style>

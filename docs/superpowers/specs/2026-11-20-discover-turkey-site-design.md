@@ -313,7 +313,17 @@ No ads on search, the legal pages, inside navigation, or above the first heading
 - `docs/ads-and-consent.md`: AdSense site approval, creating ad units and setting slot IDs, Privacy & Messaging setup, GA4 and AdSense linking, verifying Consent Mode.
 - `docs/maintenance.md`: re-review cadence, handling stale-review warnings, dependency updates, adding a region, interest or guide category, adding Turkish later.
 
-## 17. Out of scope (MVP)
+## 17. Implementation notes (deviations from the above)
+
+- **Runtime:** Astro 7 on Node 24. Astro 7 requires Node ≥ 22.23.4.
+- **Related content:** split into three fields, `relatedDestinations`, `relatedGuides` and `relatedItineraries`. This keeps references type-checked per collection and maps cleanly to CMS relation widgets.
+- **Images:** stored in `src/content/images/` and referenced as `../images/<file>` from entries.
+- **Sitemap:** a custom `/sitemap.xml` endpoint, built from the same publication-gated queries as the pages, replaces `@astrojs/sitemap`.
+- **Reference checks:** broken `related` and `stops` references are caught by Astro's own reference validation, so `validate.ts` doesn't repeat them.
+- **Preview mode:** `PUBLIC_ENV=preview` enables draft rendering, set as a preview-only environment variable in Cloudflare.
+- **Search filters:** Pagefind indexes type, region, interest and category filters. The search UI exposes the type filter; region and interest browsing are served by the browse pages.
+
+## 18. Out of scope (MVP)
 
 - User accounts and server-side "save" (sharing and browser bookmarks cover the save use case)
 - Comments
@@ -322,7 +332,7 @@ No ads on search, the legal pages, inside navigation, or above the first heading
 - Turkish translation
 - A newsletter
 
-## 18. Site-owner actions required
+## 19. Site-owner actions required
 
 - Confirm the launch destinations (done: the six listed above).
 - Review and publish each drafted entry, and approve each image.
