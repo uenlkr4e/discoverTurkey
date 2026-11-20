@@ -1,7 +1,7 @@
 import { getCollection, getEntry, type CollectionEntry, type CollectionKey } from 'astro:content';
 import { isVisible } from './content';
 import { pickRelated, type RelatedCandidate } from './related';
-import { entryKey, guideCategoryHref, interestHref, regionHref } from './urls';
+import { authorHref, entryKey, guideCategoryHref, interestHref, regionHref } from './urls';
 
 /** Preview deployments (PUBLIC_ENV=preview) also render drafts, with a banner and noindex. */
 export const showDrafts = import.meta.env.PUBLIC_ENV === 'preview';
@@ -65,6 +65,12 @@ export async function getGuideCategoriesWithContent() {
   return categories.filter((c) => guides.some((g) => g.data.category.id === c.id));
 }
 
+/** Authors with visible articles; an author page is only built once there is something to list. */
+export async function getAuthorsWithContent() {
+  const [authors, articles] = await Promise.all([getCollection('authors'), getArticles()]);
+  return authors.filter((a) => articles.some((e) => e.data.author.id === a.id));
+}
+
 export async function getItinerariesThrough(destinationIds: Set<string>): Promise<Itinerary[]> {
   return (await getItineraries()).filter((it) => it.data.stops.some((s) => destinationIds.has(s.destination.id)));
 }
@@ -92,13 +98,14 @@ export async function getRelatedFor(entry: ArticleEntry, limit = 4): Promise<Art
 
 /** Listing and taxonomy URLs that are built, for the sitemap. Mirrors the page routes. */
 export async function getListingPaths(): Promise<string[]> {
-  const [destinations, guides, itineraries, regions, interests, categories] = await Promise.all([
+  const [destinations, guides, itineraries, regions, interests, categories, authors] = await Promise.all([
     getDestinations(),
     getGuides(),
     getItineraries(),
     getRegionsWithContent(),
     getInterestsWithContent(),
     getGuideCategoriesWithContent(),
+    getAuthorsWithContent(),
   ]);
   return [
     '/',
@@ -109,5 +116,6 @@ export async function getListingPaths(): Promise<string[]> {
     ...regions.map((r) => regionHref(r.id)),
     ...interests.map((i) => interestHref(i.id)),
     ...categories.map((c) => guideCategoryHref(c.id)),
+    ...authors.map((a) => authorHref(a.id)),
   ];
 }

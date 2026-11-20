@@ -1,0 +1,108 @@
+---
+import { newsletter } from '../lib/site-env';
+
+interface Props {
+  /** Where the form is shown, reported to analytics. */
+  placement: 'article' | 'home';
+}
+
+const { placement } = Astro.props;
+const id = `newsletter-${placement}`;
+---
+
+{
+  newsletter && (
+    <section class="newsletter" aria-labelledby={`${id}-heading`} data-pagefind-ignore="all">
+      <h2 id={`${id}-heading`}>Plan a better trip to Turkey</h2>
+      <p>
+        One email a month with our new guides, seasonal tips and changes that affect travellers, such as new entry
+        rules. No spam; unsubscribe any time.
+      </p>
+      <form
+        method="post"
+        action={newsletter.action}
+        target="_blank"
+        data-newsletter={placement}
+        class="newsletter-form"
+      >
+        <label for={`${id}-email`}>Email address</label>
+        <div class="newsletter-row">
+          <input
+            id={`${id}-email`}
+            type="email"
+            name={newsletter.emailField}
+            autocomplete="email"
+            required
+          />
+          <button type="submit">
+            Subscribe<span class="visually-hidden"> (opens in a new tab)</span>
+          </button>
+        </div>
+      </form>
+      <p class="newsletter-note">
+        Emails are sent by {newsletter.provider}. See our <a href="/privacy/">privacy policy</a>.
+      </p>
+    </section>
+  )
+}
+
+<style>
+  .newsletter {
+    margin-block: var(--space-6);
+    padding: var(--space-5);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--saffron);
+    border-radius: 6px 6px var(--radius) var(--radius);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .newsletter h2 {
+    margin-top: 0;
+  }
+
+  .newsletter-form label {
+    display: block;
+    margin-bottom: var(--space-2);
+    font-weight: 700;
+  }
+
+  .newsletter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .newsletter-row input {
+    flex: 1 1 16rem;
+    min-height: 44px;
+    padding: 0 0.9rem;
+    border: 1px solid var(--muted);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+  }
+
+  .newsletter-row button {
+    min-height: 44px;
+    padding: 0 1.4rem;
+    border: 0;
+    border-radius: var(--radius);
+    background: var(--cobalt);
+    color: var(--surface);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .newsletter-row button:hover {
+    background: var(--cobalt-deep);
+  }
+
+  .newsletter-note {
+    margin: var(--space-3) 0 0;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+</style>

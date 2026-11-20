@@ -37,7 +37,7 @@ const EXPECTED: Record<string, string[]> = {
   guides: [...EDITORIAL, 'category', 'factsToVerify'],
   itineraries: [...EDITORIAL, 'days', 'interests', 'stops'],
   pages: ['title', 'summary', 'body', 'status', 'reviewedBy', 'reviewedAt', 'updatedAt', 'inSitemap'],
-  authors: ['name', 'role', 'bio'],
+  authors: ['name', 'kind', 'role', 'bio', 'photo', 'location', 'knowsAbout', 'links'],
 };
 
 describe('CMS config', () => {

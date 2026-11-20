@@ -9,6 +9,13 @@ export function initAnalytics(): void {
     track('search', { search_term: term, result_count: count });
   });
 
+  document.addEventListener('submit', (event) => {
+    const form = event.target;
+    if (form instanceof HTMLFormElement && form.dataset.newsletter) {
+      track('newsletter_signup', { placement: form.dataset.newsletter });
+    }
+  });
+
   document.addEventListener('click', (event) => {
     const link = (event.target as Element | null)?.closest?.('a[href]');
     // Share links report their own event.

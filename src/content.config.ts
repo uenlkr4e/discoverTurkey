@@ -127,7 +127,19 @@ const pages = defineCollection({
 
 const authors = defineCollection({
   loader: glob({ base: `${root}/authors`, pattern: '*.yaml' }),
-  schema: z.object({ name: z.string().trim().min(1), role: z.string().trim().min(1), bio: z.string().trim().min(1) }),
+  schema: ({ image }) =>
+    z.object({
+      name: z.string().trim().min(1),
+      // A team byline is described to search engines as an Organization, not a Person.
+      kind: z.enum(['person', 'organization']).default('person'),
+      role: z.string().trim().min(1),
+      bio: z.string().trim().min(1),
+      photo: z.object({ src: image(), alt: z.string().trim().min(1, 'Alt text is required') }).optional(),
+      location: z.string().trim().min(1).optional(),
+      knowsAbout: z.array(z.string().trim().min(1)).default([]),
+      // Profiles elsewhere (Instagram, YouTube, a personal site). Shown on the author page and given to search engines as sameAs.
+      links: z.array(z.object({ label: z.string().trim().min(1), url: z.url() })).default([]),
+    }),
 });
 
 const taxonomy = z.object({ name: z.string().trim().min(1), description: z.string().trim().min(50).max(160) });

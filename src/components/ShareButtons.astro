@@ -3,15 +3,26 @@ interface Props {
   title: string;
   url: string;
   contentType: string;
+  /** Absolute URL of the page's Pinterest image; adds a Pinterest button when present. */
+  pinMedia?: string;
 }
 
-const { title, url, contentType } = Astro.props;
+const { title, url, contentType, pinMedia } = Astro.props;
 const text = encodeURIComponent(title);
 const link = encodeURIComponent(url);
 const networks = [
   { method: 'whatsapp', label: 'WhatsApp', href: `https://wa.me/?text=${text}%20${link}` },
   { method: 'x', label: 'X', href: `https://x.com/intent/tweet?text=${text}&url=${link}` },
   { method: 'facebook', label: 'Facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${link}` },
+  ...(pinMedia
+    ? [
+        {
+          method: 'pinterest',
+          label: 'Pinterest',
+          href: `https://www.pinterest.com/pin/create/button/?url=${link}&media=${encodeURIComponent(pinMedia)}&description=${text}`,
+        },
+      ]
+    : []),
 ];
 ---
 

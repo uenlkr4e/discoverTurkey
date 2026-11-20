@@ -60,7 +60,7 @@ Its page appears once it has published content.
 | `src/layouts/`, `src/components/` | Shared layout and UI |
 | `src/scripts/` | Browser code: ads loader, analytics events, privacy settings, sharing |
 | `public/admin/` | CMS |
-| `public/_headers` | Security and caching headers on Cloudflare |
+| `src/lib/headers.ts` | Security and caching headers on Cloudflare (built as `/_headers`) |
 | `tests/unit/`, `tests/e2e/` | Vitest and Playwright tests; `tests/fixtures/generate.mjs` builds the e2e content |
 
 ## Troubleshooting

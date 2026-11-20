@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import AdSlot from '../components/AdSlot.astro';
 import Card from '../components/Card.astro';
 import InterestTiles from '../components/InterestTiles.astro';
+import NewsletterSignup from '../components/NewsletterSignup.astro';
 import SearchBox from '../components/SearchBox.astro';
 import { SITE } from '../config/site';
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -177,6 +178,7 @@ const heroImage = (seasonal[0] ?? featured[0])?.data.heroImage;
         </section>
       )
     }
+    <NewsletterSignup placement="home" />
     <AdSlot placement="footer" />
   </div>
 </BaseLayout>

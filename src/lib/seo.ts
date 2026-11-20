@@ -28,11 +28,20 @@ export function breadcrumbLd(crumbs: Crumb[], site: Site) {
   };
 }
 
+export interface AuthorRef {
+  name: string;
+  kind: 'person' | 'organization';
+  /** Absolute URL of the author's page on this site. */
+  url?: string;
+}
+
+const authorType = (kind: AuthorRef['kind']) => (kind === 'organization' ? 'Organization' : 'Person');
+
 export interface ArticleLdInput {
   headline: string;
   description: string;
   url: string;
-  authorName: string;
+  author: AuthorRef;
   updatedAt: Date;
   reviewedAt?: Date;
   publishedAt?: Date;
@@ -48,10 +57,44 @@ export function articleLd(input: ArticleLdInput) {
     description: input.description,
     mainEntityOfPage: input.url,
     ...(input.image ? { image: [input.image] } : {}),
-    author: { '@type': 'Person', name: input.authorName },
+    author: {
+      '@type': authorType(input.author.kind),
+      name: input.author.name,
+      ...(input.author.url ? { url: input.author.url } : {}),
+    },
     publisher: { '@type': 'Organization', name: SITE.name },
     datePublished: published.toISOString(),
     dateModified: input.updatedAt.toISOString(),
+  };
+}
+
+export interface AuthorProfileInput extends AuthorRef {
+  url: string;
+  description: string;
+  jobTitle?: string;
+  image?: string;
+  knowsAbout?: string[];
+  sameAs?: string[];
+}
+
+/** ProfilePage for an author page, so search engines can connect bylines to a real person. */
+export function profilePageLd(input: AuthorProfileInput) {
+  const knowsAbout = input.knowsAbout ?? [];
+  const sameAs = input.sameAs ?? [];
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    url: input.url,
+    mainEntity: {
+      '@type': authorType(input.kind),
+      name: input.name,
+      url: input.url,
+      description: input.description,
+      ...(input.jobTitle && input.kind === 'person' ? { jobTitle: input.jobTitle } : {}),
+      ...(input.image ? { image: input.image } : {}),
+      ...(knowsAbout.length ? { knowsAbout } : {}),
+      ...(sameAs.length ? { sameAs } : {}),
+    },
   };
 }
 

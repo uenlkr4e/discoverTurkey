@@ -5,6 +5,7 @@ import {
   breadcrumbLd,
   jsonLdScript,
   pageTitle,
+  profilePageLd,
   touristDestinationLd,
   websiteLd,
 } from '../../src/lib/seo';
@@ -46,7 +47,7 @@ describe('articleLd', () => {
     headline: 'Getting around',
     description: 'How to travel between cities.',
     url: 'https://example.com/guides/transport/getting-around/',
-    authorName: 'Editorial team',
+    author: { name: 'Editorial team', kind: 'organization' as const },
     updatedAt: new Date('2026-10-01'),
   };
 
@@ -60,7 +61,38 @@ describe('articleLd', () => {
     const ld = articleLd({ ...base, image: 'https://example.com/a.jpg' });
     expect(ld.dateModified).toBe('2026-10-01T00:00:00.000Z');
     expect(ld.image).toEqual(['https://example.com/a.jpg']);
-    expect(ld.author).toEqual({ '@type': 'Person', name: 'Editorial team' });
+    expect(ld.author).toEqual({ '@type': 'Organization', name: 'Editorial team' });
+  });
+
+  it('describes a person author with a link to their page', () => {
+    const ld = articleLd({ ...base, author: { name: 'Ayşe Demir', kind: 'person', url: 'https://example.com/authors/ayse/' } });
+    expect(ld.author).toEqual({ '@type': 'Person', name: 'Ayşe Demir', url: 'https://example.com/authors/ayse/' });
+  });
+});
+
+describe('profilePageLd', () => {
+  it('describes the author with optional details only when present', () => {
+    const ld = profilePageLd({
+      name: 'Ayşe Demir',
+      kind: 'person',
+      url: 'https://example.com/authors/ayse/',
+      description: 'Guide.',
+      jobTitle: 'Writer',
+      knowsAbout: ['Istanbul'],
+      sameAs: ['https://instagram.com/ayse'],
+    });
+    expect(ld['@type']).toBe('ProfilePage');
+    expect(ld.mainEntity).toEqual({
+      '@type': 'Person',
+      name: 'Ayşe Demir',
+      url: 'https://example.com/authors/ayse/',
+      description: 'Guide.',
+      jobTitle: 'Writer',
+      knowsAbout: ['Istanbul'],
+      sameAs: ['https://instagram.com/ayse'],
+    });
+    const team = profilePageLd({ name: 'Team', kind: 'organization', url: 'u', description: 'd', jobTitle: 'Editors' });
+    expect(team.mainEntity).toEqual({ '@type': 'Organization', name: 'Team', url: 'u', description: 'd' });
   });
 });
 

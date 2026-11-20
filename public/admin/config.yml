@@ -231,10 +231,36 @@ collections:
     create: true
     slug: '{{slug}}'
     identifier_field: name
+    media_folder: /src/content/images
+    public_folder: ../images
     fields:
-      - { name: name, label: Name, widget: string }
-      - { name: role, label: Role, widget: string }
-      - { name: bio, label: Bio, widget: text }
+      - { name: name, label: Name, widget: string, hint: 'Use your real name: named authors with first-hand experience are trusted more by readers and search engines.' }
+      - name: kind
+        label: Type
+        widget: select
+        default: person
+        options:
+          - { label: Person, value: person }
+          - { label: Team or organisation, value: organization }
+      - { name: role, label: Role, widget: string, hint: 'e.g. Founder and editor, Istanbul-based travel writer' }
+      - { name: bio, label: Bio, widget: text, hint: 'Who you are and why you know Turkey: where you live, how long you have travelled there, what you specialise in. The first 160 characters are used as the page description.' }
+      - name: photo
+        label: Photo
+        widget: object
+        required: false
+        fields:
+          - { name: src, label: Image, widget: image, hint: 'A clear, square-ish photo of you.' }
+          - { name: alt, label: Alt text, widget: string, hint: 'e.g. Ayşe Demir on a ferry on the Bosphorus' }
+      - { name: location, label: Location, widget: string, required: false, hint: 'e.g. Lives in İzmir' }
+      - { name: knowsAbout, label: Specialities, widget: list, required: false, hint: 'Topics you know well, e.g. Istanbul, Lycian Way, Turkish food' }
+      - name: links
+        label: Profiles elsewhere
+        widget: list
+        required: false
+        hint: 'Your Instagram, YouTube, personal site and so on. Helps readers and search engines confirm who you are.'
+        fields:
+          - { name: label, label: Label, widget: string }
+          - { name: url, label: URL, widget: string, pattern: ['^https?://', 'Must be a URL'] }
 
   - name: taxonomies
     label: Regions, interests and categories

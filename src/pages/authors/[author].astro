@@ -1,0 +1,137 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getImage, Image } from 'astro:assets';
+import Card from '../../components/Card.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getArticles, getAuthorsWithContent, type ArticleEntry } from '../../lib/collections';
+import { absoluteUrl, pageTitle, profilePageLd } from '../../lib/seo';
+import { authorHref, COLLECTION_LABEL, hrefFor } from '../../lib/urls';
+
+export async function getStaticPaths() {
+  const [authors, articles] = await Promise.all([getAuthorsWithContent(), getArticles()]);
+  return authors.map((author) => ({
+    params: { author: author.id },
+    props: { author, articles: articles.filter((e) => e.data.author.id === author.id) },
+  }));
+}
+
+interface Props {
+  author: CollectionEntry<'authors'>;
+  articles: ArticleEntry[];
+}
+
+const { author, articles } = Astro.props;
+const a = author.data;
+const site = Astro.site!;
+const url = absoluteUrl(authorHref(author.id), site);
+const photo = a.photo ? await getImage({ src: a.photo.src, width: 600, format: 'jpeg' }) : undefined;
+const profile = profilePageLd({
+  name: a.name,
+  kind: a.kind,
+  url,
+  description: a.bio,
+  jobTitle: a.role,
+  image: photo && absoluteUrl(photo.src, site),
+  knowsAbout: a.knowsAbout,
+  sameAs: a.links.map((l) => l.url),
+});
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: a.name, href: authorHref(author.id) },
+];
+const description = a.bio.length > 160 ? `${a.bio.slice(0, 157).trimEnd()}…` : a.bio;
+---
+
+<BaseLayout title={pageTitle(a.name)} description={description} crumbs={crumbs} ogType="website" jsonLd={[profile]}>
+  <div class="container">
+    <PageIntro title={a.name}>
+      <div class="profile">
+        {
+          a.photo && (
+            <Image src={a.photo.src} alt={a.photo.alt} widths={[160, 320]} sizes="160px" class="profile-photo" />
+          )
+        }
+        <div>
+          <p class="role">
+            {a.role}
+            {a.location && <span> · {a.location}</span>}
+          </p>
+          <p class="lede">{a.bio}</p>
+          {
+            a.knowsAbout.length > 0 && (
+              <p class="knows">
+                <strong>Writes about:</strong> {a.knowsAbout.join(', ')}
+              </p>
+            )
+          }
+          {
+            a.links.length > 0 && (
+              <ul class="chip-list">
+                {a.links.map((l) => (
+                  <li>
+                    <a href={l.url} rel="me noopener" target="_blank">
+                      {l.label}
+                      <span class="visually-hidden"> (opens in a new tab)</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )
+          }
+        </div>
+      </div>
+    </PageIntro>
+
+    <section class="section" aria-labelledby="articles">
+      <h2 id="articles">{a.kind === 'organization' ? 'Our guides' : `Guides by ${a.name}`}</h2>
+      <ul class="card-grid">
+        {
+          articles.map((e) => (
+            <li>
+              <Card
+                href={hrefFor(e)}
+                title={e.data.title}
+                summary={e.data.summary}
+                image={e.data.heroImage.src}
+                eyebrow={COLLECTION_LABEL[e.collection]}
+              />
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .profile {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4) var(--space-5);
+    align-items: flex-start;
+  }
+
+  .profile > div {
+    flex: 1 1 28rem;
+  }
+
+  .profile-photo {
+    width: 160px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid var(--surface);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .role {
+    margin: 0 0 var(--space-2);
+    font-weight: 700;
+    color: var(--muted);
+  }
+
+  .knows {
+    color: var(--muted);
+  }
+</style>

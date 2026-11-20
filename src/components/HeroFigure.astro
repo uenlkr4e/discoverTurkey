@@ -4,9 +4,12 @@ import type { HeroImage } from '../lib/collections';
 
 interface Props {
   image: HeroImage;
+  /** Absolute URL of a tall Pinterest image; Pinterest's Save button uses it instead of the hero. */
+  pinMedia?: string;
+  pinDescription?: string;
 }
 
-const { image } = Astro.props;
+const { image, pinMedia, pinDescription } = Astro.props;
 ---
 
 <figure class="hero">
@@ -17,6 +20,8 @@ const { image } = Astro.props;
     sizes="(min-width: 1152px) 72rem, 100vw"
     priority
     class="hero-img"
+    data-pin-media={pinMedia}
+    data-pin-description={pinMedia ? pinDescription : undefined}
   />
   <figcaption>
     Photo: <a href={image.credit.sourceUrl} rel="noopener">{image.credit.author}</a>, {image.credit.license}

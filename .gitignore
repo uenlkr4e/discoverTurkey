@@ -11,3 +11,4 @@ playwright-report/
 .lighthouseci/
 tests/fixtures/.generated/
 .shots/
+pins.csv

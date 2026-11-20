@@ -10,7 +10,7 @@ import { SITE } from '../config/site';
 import { showDrafts } from '../lib/collections';
 import { assertContentValid } from '../lib/content-checks';
 import { absoluteUrl, breadcrumbLd, jsonLdScript, type Crumb } from '../lib/seo';
-import { ads, consentDefaultArgs, gaId } from '../lib/site-env';
+import { ads, consentDefaultArgs, gaId, verification } from '../lib/site-env';
 
 interface Props {
   /** Full <title>, usually from pageTitle(). */
@@ -67,6 +67,8 @@ const robots = noindex || showDrafts ? 'noindex, nofollow' : 'index, follow, max
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <meta name="robots" content={robots} />
+    {verification.google && <meta name="google-site-verification" content={verification.google} />}
+    {verification.pinterest && <meta name="p:domain_verify" content={verification.pinterest} />}
     <meta property="og:site_name" content={SITE.name} />
     <meta property="og:type" content={ogType} />
     <meta property="og:title" content={title} />

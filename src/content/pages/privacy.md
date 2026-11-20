@@ -18,11 +18,12 @@ The site is operated by Discover Turkey, Konya, Türkiye. Contact: <discoverturk
 
 ## What we collect and why
 
-We don't offer user accounts and don't ask you for personal information. Personal data is processed in the following ways:
+We don't offer user accounts. We only ask for personal information, your email address, if you subscribe to our newsletter. Personal data is processed in the following ways:
 
 - **Hosting and security.** The site is hosted by Cloudflare. To deliver pages and protect the site against abuse, Cloudflare processes technical data such as your IP address, browser type and the pages requested. Legal basis: our legitimate interest in operating a secure website.
 - **Advertising.** We show ads served by Google AdSense. Google may use cookies and similar technologies to show ads, limit how often you see them, measure their performance and prevent fraud. Where required, ads are only personalised with your consent. Otherwise, Google serves non-personalised ads, which still use cookies for frequency capping, aggregated reporting and fraud prevention. Legal basis: your consent where required, and otherwise our legitimate interest in funding the site.
 - **Analytics.** With your consent, we use Google Analytics to understand how visitors use the site, for example which pages are read and which searches are made, so we can improve it. Without consent, Google Analytics receives only limited signals that don't use cookies. Legal basis: your consent.
+- **Newsletter.** If you subscribe to our newsletter, your email address is stored by the email service named on the signup form, which sends the emails for us. We use it only to send the newsletter, and every email has an unsubscribe link. The service may record whether emails are opened and links are clicked, to help us improve them. Legal basis: your consent, which you can withdraw at any time by unsubscribing.
 - **Contacting us.** If you email us, we use your message and email address only to reply, and keep them only as long as needed.
 
 ## Consent and your choices

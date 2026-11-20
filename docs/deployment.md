@@ -22,6 +22,7 @@ The site is static HTML built by Astro and served by Cloudflare Pages. Pushing t
 | `PUBLIC_AD_SLOT_INCONTENT` / `_SIDEBAR` / `_FOOTER` | ad unit IDs | *(unset)* |
 | `PUBLIC_CONSENT_MODE` | `strict` | `strict` |
 | `PUBLIC_GA4_ID` | `G-…` | *(unset)* |
+| `PUBLIC_NEWSLETTER_ACTION` / `_PROVIDER` / `_EMAIL_FIELD` | see [newsletter](newsletter.md) | *(unset)* |
 
    `PUBLIC_ENV=preview` is what makes drafts visible on previews and blocks crawlers. Never set it in production. Keep `SITE_URL` as the production domain in both environments, so canonical URLs never point at preview hosts.
 
@@ -31,7 +32,7 @@ The site is static HTML built by Astro and served by Cloudflare Pages. Pushing t
    - **SSL/TLS → Always Use HTTPS**
    - **Rules → Redirect Rules**: redirect the bare domain to `www`, or the other way round, to match `SITE_URL`.
 
-Security and caching headers are set in `public/_headers`.
+Security and caching headers are generated at build time by `src/lib/headers.ts` (served as `/_headers`).
 
 ## 2. CMS sign-in (Sveltia CMS Authenticator)
 

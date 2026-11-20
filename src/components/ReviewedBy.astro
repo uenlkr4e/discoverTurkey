@@ -3,15 +3,17 @@ import { formatDate, isoDate } from '../lib/format';
 
 interface Props {
   authorName: string;
+  /** Link to the author's page; omitted while it isn't built. */
+  authorHref?: string;
   reviewedBy?: string;
   reviewedAt?: Date;
 }
 
-const { authorName, reviewedBy, reviewedAt } = Astro.props;
+const { authorName, authorHref, reviewedBy, reviewedAt } = Astro.props;
 ---
 
 <p class="byline">
-  <span>By {authorName}</span>
+  <span>By {authorHref ? <a href={authorHref} rel="author">{authorName}</a> : authorName}</span>
   <span aria-hidden="true">·</span>
   {
     reviewedBy && reviewedAt ? (

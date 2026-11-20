@@ -25,6 +25,7 @@ export function hrefFor(entry: Linkable): string {
 export const regionHref = (id: string) => `/regions/${id}/`;
 export const interestHref = (id: string) => `/interests/${id}/`;
 export const guideCategoryHref = (id: string) => `/guides/${id}/`;
+export const authorHref = (id: string) => `/authors/${id}/`;
 
 export function entryKey(entry: { collection: string; id: string }): string {
   return `${entry.collection}/${entry.id}`;
