@@ -51,3 +51,10 @@ Malformed IDs fail the build. Changing any of these needs a redeploy, but no con
 - **Layout stability:** every slot reserves its full size before loading, is labelled "Advertisement", and only loads when it nears the viewport.
 - **Consent:** Google Consent Mode v2 defaults are set before any Google tag loads. The consent banner itself is Google Privacy & messaging, configured in the AdSense dashboard; the footer "Privacy settings" link appears once it is active.
 - **GA4 events:** `ad_slot_rendered`, `ad_slot_viewable`, `search`, `outbound_click`, `share`.
+
+## Documentation
+
+- [Content workflow](docs/content-workflow.md): editing in the CMS, review and publishing, image licensing
+- [Deployment](docs/deployment.md): Cloudflare Pages, environment variables, CMS sign-in, CI
+- [Ads, consent and analytics](docs/ads-and-consent.md): AdSense setup, consent message, GA4
+- [Maintenance](docs/maintenance.md): routine tasks, upgrades, extending the site, troubleshooting

@@ -324,6 +324,9 @@ No ads on search, the legal pages, inside navigation, or above the first heading
 - **In-content ad:** placed at render time in the article column (before the third, or second, h2 once the column has 600+ words), not by a Markdown plugin. Astro 7's default Markdown processor no longer runs rehype plugins, and render-time placement keeps ad settings out of cached content.
 - **Consent mode:** `PUBLIC_CONSENT_MODE` selects `strict` (default: denied everywhere, `requestNonPersonalizedAds` set) or `regional` (denied by default only in the EEA, UK and Switzerland). The site owner decides when `regional` is appropriate.
 - **Sharing:** native share where available, copy link, and WhatsApp, X and Facebook links, with no third-party scripts.
+- **CSP:** the Content-Security-Policy in `public/_headers` sets `frame-ancestors`, `object-src`, `base-uri`, `form-action` and `upgrade-insecure-requests`, but does not restrict `script-src`. AdSense and its consent platform load from a changing set of Google domains, so a domain allowlist would silently break ad delivery. Revisit with a hash-based `strict-dynamic` policy if ads are dropped.
+- **CMS sign-in:** the Sveltia CMS Authenticator now uses a GitHub App rather than an OAuth app. A fine-grained personal access token works as a quick start.
+- **Fonts:** only the Latin, upright body font is preloaded, and the display font is a single static weight (700). Together these keep simulated mobile LCP at about 2.5 s.
 - **Search filters:** Pagefind indexes type, region, interest and category filters. The search UI exposes the type filter; region and interest browsing are served by the browse pages.
 
 ## 18. Out of scope (MVP)

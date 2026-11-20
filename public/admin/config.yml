@@ -1,0 +1,263 @@
+# Sveltia CMS configuration: https://sveltiacms.app/en/docs
+# Fields mirror the zod schemas in src/content.config.ts; the build rejects anything invalid.
+# tests/unit/cms-config.test.ts checks the two stay in step.
+# Fields defined once with &anchors are reused below with *aliases.
+
+backend:
+  name: github
+  repo: uenlkr4e/discoverTurkey
+  branch: main
+  # REQUIRED: URL of your Sveltia CMS Authenticator worker (see docs/deployment.md).
+  base_url: https://sveltia-cms-auth.example.workers.dev
+
+# Every change becomes a branch and pull request: Draft → In review → Ready → published by merging.
+publish_mode: editorial_workflow
+
+# REQUIRED: the production site URL, used for "view on site" links.
+site_url: https://www.discoverturkey.example
+# Global media library. Entries use the collection-level settings below so image paths are
+# written relative to the entry file (../images/x.jpg), which is how Astro resolves them.
+media_folder: /src/content/images
+public_folder: /src/content/images
+
+slug:
+  encoding: ascii
+  clean_accents: true
+
+collections:
+  - name: destinations
+    label: Destinations
+    label_singular: Destination
+    folder: src/content/destinations
+    media_folder: /src/content/images
+    public_folder: ../images
+    extension: md
+    format: frontmatter
+    create: true
+    slug: '{{slug}}'
+    identifier_field: title
+    summary: '{{title}} ({{status}})'
+    preview_path: 'destinations/{{slug}}/'
+    fields:
+      - &title { name: title, label: Title, widget: string, hint: 'Unique across the site.' }
+      - &summary
+        name: summary
+        label: Summary
+        widget: text
+        hint: '50–160 characters. Used on cards and as the default meta description.'
+        pattern: ['^[\s\S]{50,160}$', 'Must be 50–160 characters']
+      - &heroImage
+        name: heroImage
+        label: Hero image
+        widget: object
+        fields:
+          - { name: src, label: Image, widget: image, hint: 'Landscape, at least 1600px wide.' }
+          - { name: alt, label: Alt text, widget: string, hint: 'Describe what the photo shows for people who cannot see it.' }
+          - name: credit
+            label: Credit
+            widget: object
+            hint: 'Where the image came from and its licence. Only use images whose licence allows commercial use.'
+            fields:
+              - { name: author, label: Photographer or author, widget: string }
+              - { name: sourceUrl, label: Source URL, widget: string, pattern: ['^https?://', 'Must be a URL'] }
+              - { name: license, label: Licence, widget: string, hint: 'e.g. CC BY-SA 4.0, Unsplash License, Own photo' }
+      - { name: region, label: Region, widget: relation, collection: taxonomies, file: regions, value_field: '{{regions.*.id}}', display_fields: ['{{regions.*.name}}'], search_fields: ['{{regions.*.name}}'] }
+      - &interests { name: interests, label: Interests, widget: relation, collection: taxonomies, file: interests, multiple: true, min: 1, value_field: '{{interests.*.id}}', display_fields: ['{{interests.*.name}}'], search_fields: ['{{interests.*.name}}'] }
+      - name: bestTimeToVisit
+        label: Best time to visit
+        widget: object
+        fields:
+          - { name: summary, label: Summary, widget: string }
+          - { name: spring, label: Spring, widget: text }
+          - { name: summer, label: Summer, widget: text }
+          - { name: autumn, label: Autumn, widget: text }
+          - { name: winter, label: Winter, widget: text }
+      - { name: suggestedDuration, label: Suggested stay, widget: string, hint: 'e.g. 3–4 days' }
+      - name: coordinates
+        label: Coordinates
+        widget: object
+        hint: 'Decimal degrees, e.g. 41.0082 and 28.9784 for Istanbul.'
+        fields:
+          - { name: lat, label: Latitude, widget: number, value_type: float, min: 35, max: 43 }
+          - { name: lng, label: Longitude, widget: number, value_type: float, min: 25, max: 45 }
+      - name: attractions
+        label: Attractions
+        label_singular: Attraction
+        widget: list
+        min: 1
+        fields:
+          - { name: name, label: Name, widget: string }
+          - { name: description, label: Description, widget: markdown }
+      - { name: gettingThere, label: Getting there, widget: markdown }
+      - { name: gettingAround, label: Getting around, widget: markdown }
+      - { name: foodAndExperiences, label: Food and local experiences, widget: markdown }
+      - &body { name: body, label: Body, widget: markdown }
+      - { name: featured, label: Featured on homepage, widget: boolean, default: false }
+      - name: seasonalHighlight
+        label: Seasonal highlight
+        widget: object
+        required: false
+        hint: 'Optional. Shown on the homepage during this season.'
+        fields:
+          - { name: season, label: Season, widget: select, options: [spring, summer, autumn, winter] }
+          - { name: text, label: Text, widget: string }
+      - &tags { name: tags, label: Tags, widget: list, required: false, hint: 'Lower-case keywords used to suggest related content.' }
+      - &relatedDestinations { name: relatedDestinations, label: Related destinations, widget: relation, collection: destinations, multiple: true, required: false, value_field: '{{slug}}', search_fields: [title], display_fields: [title] }
+      - &relatedGuides { name: relatedGuides, label: Related guides, widget: relation, collection: guides, multiple: true, required: false, value_field: '{{slug}}', search_fields: [title], display_fields: [title] }
+      - &relatedItineraries { name: relatedItineraries, label: Related itineraries, widget: relation, collection: itineraries, multiple: true, required: false, value_field: '{{slug}}', search_fields: [title], display_fields: [title] }
+      - &author { name: author, label: Author, widget: relation, collection: authors, value_field: '{{slug}}', search_fields: [name], display_fields: [name] }
+      - &status
+        name: status
+        label: Publication status
+        widget: select
+        default: draft
+        options:
+          - { label: Draft, value: draft }
+          - { label: In review, value: in-review }
+          - { label: Published, value: published }
+        hint: 'Published entries need a reviewer and review date, or the build fails.'
+      - &reviewedBy { name: reviewedBy, label: Reviewed by, widget: string, required: false, hint: 'Editor who checked every fact on this page.' }
+      - &reviewedAt { name: reviewedAt, label: Review date, widget: datetime, time_format: false, format: 'YYYY-MM-DD', required: false }
+      - &publishedAt { name: publishedAt, label: First published, widget: datetime, time_format: false, format: 'YYYY-MM-DD', required: false }
+      - &updatedAt { name: updatedAt, label: Last updated, widget: datetime, time_format: false, format: 'YYYY-MM-DD' }
+      - &seoTitle { name: seoTitle, label: SEO title, widget: string, required: false, hint: 'Optional, max 60 characters. Defaults to the title.', pattern: ['^.{0,60}$', 'Max 60 characters'] }
+      - &seoDescription { name: seoDescription, label: SEO description, widget: text, required: false, hint: 'Optional, 50–160 characters. Defaults to the summary.' }
+
+  - name: guides
+    label: Travel tips
+    label_singular: Guide
+    folder: src/content/guides
+    media_folder: /src/content/images
+    public_folder: ../images
+    extension: md
+    format: frontmatter
+    create: true
+    slug: '{{slug}}'
+    identifier_field: title
+    summary: '{{title}} ({{status}})'
+    fields:
+      - *title
+      - *summary
+      - *heroImage
+      - { name: category, label: Category, widget: relation, collection: taxonomies, file: guideCategories, value_field: '{{categories.*.id}}', display_fields: ['{{categories.*.name}}'], search_fields: ['{{categories.*.name}}'] }
+      - *body
+      - name: factsToVerify
+        label: Facts to verify
+        widget: list
+        required: false
+        hint: 'Time-sensitive claims (prices, hours, rules) the reviewer must check against official sources. Shown only on draft previews.'
+      - *tags
+      - *relatedDestinations
+      - *relatedGuides
+      - *relatedItineraries
+      - *author
+      - *status
+      - *reviewedBy
+      - *reviewedAt
+      - *publishedAt
+      - *updatedAt
+      - *seoTitle
+      - *seoDescription
+
+  - name: itineraries
+    label: Itineraries
+    label_singular: Itinerary
+    folder: src/content/itineraries
+    media_folder: /src/content/images
+    public_folder: ../images
+    extension: md
+    format: frontmatter
+    create: true
+    slug: '{{slug}}'
+    identifier_field: title
+    summary: '{{title}} ({{status}})'
+    preview_path: 'itineraries/{{slug}}/'
+    fields:
+      - *title
+      - *summary
+      - *heroImage
+      - { name: days, label: Number of days, widget: number, value_type: int, min: 1, max: 30 }
+      - *interests
+      - name: stops
+        label: Day-by-day stops
+        label_singular: Stop
+        widget: list
+        min: 1
+        fields:
+          - { name: day, label: Day, widget: number, value_type: int, min: 1 }
+          - { name: destination, label: Destination, widget: relation, collection: destinations, value_field: '{{slug}}', search_fields: [title], display_fields: [title] }
+          - { name: title, label: Title, widget: string }
+          - { name: plan, label: Plan, widget: markdown }
+      - *body
+      - *tags
+      - *relatedDestinations
+      - *relatedGuides
+      - *relatedItineraries
+      - *author
+      - *status
+      - *reviewedBy
+      - *reviewedAt
+      - *publishedAt
+      - *updatedAt
+      - *seoTitle
+      - *seoDescription
+
+  - name: pages
+    label: Pages
+    label_singular: Page
+    folder: src/content/pages
+    extension: md
+    format: frontmatter
+    create: true
+    slug: '{{slug}}'
+    identifier_field: title
+    preview_path: '{{slug}}/'
+    fields:
+      - *title
+      - *summary
+      - *body
+      - { name: inSitemap, label: Include in sitemap, widget: boolean, default: true }
+      - *status
+      - *reviewedBy
+      - *reviewedAt
+      - *updatedAt
+
+  - name: authors
+    label: Authors
+    label_singular: Author
+    folder: src/content/authors
+    extension: yaml
+    format: yaml
+    create: true
+    slug: '{{slug}}'
+    identifier_field: name
+    fields:
+      - { name: name, label: Name, widget: string }
+      - { name: role, label: Role, widget: string }
+      - { name: bio, label: Bio, widget: text }
+
+  - name: taxonomies
+    label: Regions, interests and categories
+    files:
+      - name: regions
+        label: Regions
+        file: src/data/regions.yaml
+        fields:
+          - name: regions
+            label: Regions
+            widget: list
+            root: true
+            fields: &taxonomyFields
+              - { name: id, label: ID, widget: string, hint: 'Lower-case, hyphenated. Used in URLs; do not change once published.' }
+              - { name: name, label: Name, widget: string }
+              - { name: description, label: Description, widget: text, hint: '50–160 characters.' }
+      - name: interests
+        label: Interests
+        file: src/data/interests.yaml
+        fields:
+          - { name: interests, label: Interests, widget: list, root: true, fields: *taxonomyFields }
+      - name: guideCategories
+        label: Guide categories
+        file: src/data/guide-categories.yaml
+        fields:
+          - { name: categories, label: Categories, widget: list, root: true, fields: *taxonomyFields }

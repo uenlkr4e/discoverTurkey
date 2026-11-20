@@ -1,0 +1,23 @@
+name: Weekly rebuild
+
+# Rebuilds production so build-time content (e.g. the homepage's seasonal picks) stays current.
+on:
+  schedule:
+    - cron: '0 4 * * 1'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger the Cloudflare Pages deploy hook
+        env:
+          HOOK: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "::error::Set the CLOUDFLARE_DEPLOY_HOOK_URL repository secret (see docs/deployment.md)."
+            exit 1
+          fi
+          curl --fail --silent --show-error -X POST "$HOOK"

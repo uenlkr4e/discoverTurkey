@@ -17,7 +17,7 @@ export default defineConfig({
       provider: fontProviders.fontsource(),
       name: 'Fraunces',
       cssVariable: '--font-display',
-      weights: ['600 700'],
+      weights: ['700'],
       styles: ['normal'],
       subsets: ['latin', 'latin-ext'],
       fallbacks: ['Georgia', 'serif'],

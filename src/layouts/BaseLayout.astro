@@ -84,7 +84,7 @@ const robots = noindex || showDrafts ? 'noindex, nofollow' : 'index, follow, max
     }
     <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <Font cssVariable="--font-body" preload />
+    <Font cssVariable="--font-body" preload={[{ subset: 'latin', style: 'normal' }]} />
     <Font cssVariable="--font-display" />
     <script is:inline>document.documentElement.classList.add('js');</script>
     {structured.map((data) => <script type="application/ld+json" set:html={jsonLdScript(data)} />)}
