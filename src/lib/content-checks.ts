@@ -2,7 +2,7 @@ import { getCollection } from 'astro:content';
 import { manualRelatedKeys, type ArticleEntry } from './collections';
 import { wordCount } from './content';
 import { entryKey } from './urls';
-import { checkContent, type CheckEntry } from './validate';
+import { checkContent, findPlaceholders, type CheckEntry } from './validate';
 
 let pending: Promise<void> | undefined;
 
@@ -31,11 +31,15 @@ function linksOf(e: ArticleEntry): string[] {
 }
 
 async function run(): Promise<void> {
-  const [d, g, i] = await Promise.all([
+  const [d, g, i, pages] = await Promise.all([
     getCollection('destinations'),
     getCollection('guides'),
     getCollection('itineraries'),
+    getCollection('pages'),
   ]);
+  // Scan all frontmatter and body text, so a placeholder anywhere blocks publishing.
+  const placeholdersIn = (e: { data: unknown; body?: string }) =>
+    findPlaceholders(`${JSON.stringify(e.data)}\n${e.body ?? ''}`);
   const entries: CheckEntry[] = [...d, ...g, ...i].map((e) => ({
     key: entryKey(e),
     collection: e.collection,
@@ -46,7 +50,21 @@ async function run(): Promise<void> {
     reviewedAt: e.data.reviewedAt,
     words: wordCount(textOf(e)),
     links: linksOf(e),
+    placeholders: placeholdersIn(e),
   }));
+  for (const p of pages) {
+    entries.push({
+      key: entryKey(p),
+      collection: p.collection,
+      title: p.data.title,
+      description: p.data.summary,
+      status: p.data.status,
+      reviewedAt: p.data.reviewedAt,
+      words: wordCount(p.body ?? ''),
+      links: [],
+      placeholders: placeholdersIn(p),
+    });
+  }
 
   const { errors, warnings } = checkContent(entries, new Date());
   for (const warning of warnings) console.warn(`[content] ${warning}`);

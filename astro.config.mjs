@@ -3,6 +3,8 @@ import { defineConfig, fontProviders } from 'astro/config';
 export default defineConfig({
   site: process.env.SITE_URL ?? 'http://localhost:4321',
   trailingSlash: 'always',
+  // Fixture builds (CONTENT_DIR set) get their own cache so test content can never leak into real builds.
+  ...(process.env.CONTENT_DIR ? { cacheDir: './node_modules/.astro-fixtures' } : {}),
   fonts: [
     {
       provider: fontProviders.fontsource(),

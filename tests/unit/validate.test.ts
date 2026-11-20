@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { checkContent, type CheckEntry } from '../../src/lib/validate';
+import { checkContent, findPlaceholders, type CheckEntry } from '../../src/lib/validate';
 
 const now = new Date('2026-11-20T00:00:00Z');
 const entry = (over: Partial<CheckEntry>): CheckEntry => ({
@@ -76,5 +76,22 @@ describe('checkContent', () => {
     expect(warnings).toEqual([
       'destinations/istanbul links to destinations/draft, which is not published; the link stays hidden until it is',
     ]);
+  });
+});
+
+describe('placeholders', () => {
+  it('finds editor placeholders in text', () => {
+    expect(findPlaceholders('Email us at [TO COMPLETE: contact email].')).toEqual(['[TO COMPLETE: contact email]']);
+    expect(findPlaceholders('alt: PENDING')).toEqual(['PENDING']);
+    expect(findPlaceholders('Spending a pending afternoon')).toEqual([]);
+  });
+
+  it('blocks publishing entries that still contain placeholders', () => {
+    const { errors } = checkContent([entry({ placeholders: ['PENDING'] })], now);
+    expect(errors).toEqual(['destinations/istanbul still contains placeholder text: PENDING']);
+  });
+
+  it('allows placeholders in drafts', () => {
+    expect(checkContent([entry({ status: 'draft', placeholders: ['PENDING'] })], now).errors).toEqual([]);
   });
 });

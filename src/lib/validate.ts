@@ -13,6 +13,13 @@ export interface CheckEntry {
   words: number;
   /** Keys of entries this one links to (related content, itinerary stops). */
   links: string[];
+  /** Editor placeholders still present (see findPlaceholders). */
+  placeholders?: string[];
+}
+
+/** Markers used in drafts for details the site owner must supply. */
+export function findPlaceholders(text: string): string[] {
+  return text.match(/\[TO COMPLETE[^\]]*\]|\bPENDING\b/g) ?? [];
 }
 
 export interface CheckResult {
@@ -51,6 +58,9 @@ export function checkContent(entries: CheckEntry[], now: Date): CheckResult {
   }
 
   for (const e of published) {
+    if (e.placeholders?.length) {
+      errors.push(`${e.key} still contains placeholder text: ${[...new Set(e.placeholders)].join(', ')}`);
+    }
     if (WORD_CHECKED.has(e.collection) && e.words < MIN_WORDS) {
       errors.push(`${e.key} has ${e.words} words; published destinations and guides need at least ${MIN_WORDS}`);
     }
