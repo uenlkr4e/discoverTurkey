@@ -82,3 +82,5 @@ The big sights get very busy, especially from late morning in summer and around 
 ## Tips for a smoother visit
 
 Carry a scarf, and wear clothes that cover your shoulders and knees, for visiting mosques. Keep small change for ferries, tea and street food. Check opening days and ticket arrangements on the official sites before you go: hours and prices for the major museums change from time to time.
+
+Tickets for state museums such as Topkapı Palace and the Istanbul Archaeology Museums are sold online on the Ministry of Culture and Tourism's [official museum site](https://muze.gov.tr/), which also sells the **MuseumPass İstanbul**. If you plan to see several museums, compare its cost with individual tickets. For more ideas and city events, see the official [GoTürkiye Istanbul pages](https://goturkiye.com/istanbul).

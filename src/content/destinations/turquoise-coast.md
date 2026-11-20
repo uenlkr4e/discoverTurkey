@@ -81,3 +81,7 @@ A day on a boat is almost obligatory. Excursion boats leave each morning from Fe
 ## Responsible travel
 
 Patara and other beaches are important nesting sites for endangered loggerhead turtles. Follow the beach closing times and signs, don't leave umbrellas or rubbish on the sand, and keep lights away from the beach at night.
+
+When choosing a beach, look for the **Blue Flag**, an international award for water quality, safety and environmental management. Awards are renewed every year, so check the current list on the [Blue Flag Türkiye website](https://www.mavibayrak.org.tr/).
+
+The ruins of ancient Patara, set back from the beach, have opened into the evening in recent summers as part of the Ministry of Culture and Tourism's [Night Museums](https://goturkiye.com/night-museums) programme. Check the current season's dates and hours on the [official museum site](https://muze.gov.tr/).

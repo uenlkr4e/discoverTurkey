@@ -76,6 +76,10 @@ The region was the ancient land of Pamphylia, and its cities were rich in the Ro
 
 Combining Perge and Aspendos in one day is easy by car. Start early in summer: there is little shade at either site.
 
+If you're visiting several of these sites and the Antalya Museum, compare the cost of the **MuseumPass The Mediterranean** with individual tickets. Both are sold on the Ministry of Culture and Tourism's [official museum site](https://muze.gov.tr/). In recent summers, Side has also opened into the evening as part of the ministry's [Night Museums](https://goturkiye.com/night-museums) programme, so you can see the Temple of Apollo at sunset. Check the current season's dates first.
+
 ## With children
 
 Antalya works well for families, with long beaches, boat trips and a mild climate for much of the year. Midday summer heat is intense, so plan outdoor activities for the morning and late afternoon.
+
+Many beaches on this coast fly the **Blue Flag**, an international award for water quality, safety and environmental management. Awards are renewed every year, so check the current list on the [Blue Flag Türkiye website](https://www.mavibayrak.org.tr/).

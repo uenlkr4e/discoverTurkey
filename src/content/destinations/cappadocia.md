@@ -21,7 +21,7 @@ suggestedDuration: 2–3 days
 coordinates: { lat: 38.6431, lng: 34.8289 }
 attractions:
   - name: Göreme Open-Air Museum
-    description: A cluster of rock-cut monasteries and chapels, many with vivid Byzantine frescoes, at the centre of the UNESCO World Heritage Site *Göreme National Park and the Rock Sites of Cappadocia*. Some of the finest painted churches are ticketed separately.
+    description: A cluster of rock-cut monasteries and chapels, many with vivid Byzantine frescoes, at the centre of the UNESCO World Heritage Site *Göreme National Park and the Rock Sites of Cappadocia*. Some of the finest painted churches, including the Dark Church (*Karanlık Kilise*), are ticketed separately and aren't covered by museum passes.
   - name: Valley walks
     description: Marked and unmarked trails thread through Rose, Red, Love, Pigeon and other valleys between Göreme, Çavuşin and Uçhisar. Most walks are a few hours long; take water, sun protection and an offline map.
   - name: Underground cities
@@ -76,6 +76,8 @@ If you prefer to stay on the ground, viewpoints above Göreme and around Çavuş
 ## How long to stay
 
 Two full days let you see the open-air museum, walk a valley or two, visit an underground city and catch a sunset. Three days give you a spare morning for a balloon flight, the Ihlara Valley, or simply slowing down.
+
+If you plan to visit the open-air museum, an underground city and other state sites, compare the cost of the **MuseumPass Cappadocia** with individual tickets. Both are sold on the Ministry of Culture and Tourism's [official museum site](https://muze.gov.tr/).
 
 ## A note on caves and comfort
 

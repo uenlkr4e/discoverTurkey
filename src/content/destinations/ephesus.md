@@ -69,6 +69,8 @@ Allow at least three hours for the main site, more if you visit the Terrace Hous
 - **Walk downhill.** Start at the upper gate and finish at the lower gate near the theatre.
 - **Bring water, a hat and sunscreen.** There's little shade, even in spring.
 - **Consider a guide or audio guide.** The ruins make far more sense with context. Licensed guides can be hired at the entrances; agree the length and price beforehand.
+- **Buy tickets online.** Tickets for Ephesus can be bought in advance on the Ministry of Culture and Tourism's [official museum site](https://muze.gov.tr/), which also sells the **MuseumPass The Aegean**, covering many state sites in the region. Museum passes don't always include the Terrace Houses, so check before you buy.
+- **Look out for evening openings.** In recent summers, Ephesus has opened into the evening as part of the ministry's [Night Museums](https://goturkiye.com/night-museums) programme, a cooler way to see the ruins. Check the current season's dates and hours on the official museum site.
 
 ## Why stay in Selçuk
 

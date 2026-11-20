@@ -15,6 +15,8 @@ factsToVerify:
   - Current official travel advice from major governments, especially for areas near the Syrian border
   - Current guidance on drinking tap water in the main tourist cities
   - Names of taxi apps currently operating in Istanbul
+  - That Alo 176, the Ministry of Culture and Tourism contact line, takes tourism complaints and which languages it supports
+  - That www.evisa.gov.tr is still the only official e-Visa portal
 tags: [safety, health, scams, emergencies, earthquakes]
 relatedGuides: [money-and-payments, sim-cards-esims-and-wifi]
 author: editorial-team
@@ -33,6 +35,7 @@ Millions of visitors travel to Turkey every year without any problems, and the m
 - **Emergency number.** The emergency number in Turkey is **112**, for ambulance, police and fire.
 - **Embassies.** Save the address and phone number of your embassy or consulate in Turkey.
 - **Insurance.** Have travel insurance that covers medical treatment and repatriation, and keep the policy details on your phone.
+- **Complaints about tourism businesses.** To report a problem with a hotel, travel agency or other tourism business, contact the Ministry of Culture and Tourism's **Alo 176** line by dialling 176 in Turkey.
 - **Healthcare.** Private hospitals in the cities have high standards, and many staff speak English, but treatment can be expensive without insurance.
 
 ## Common scams
@@ -42,7 +45,8 @@ Most people you meet will be genuinely friendly, but in the busiest tourist area
 - **The friendly bar invitation.** A stranger, often a man travelling alone, is invited to a bar or club, then presented with a huge bill and pressured to pay. Choose where you drink yourself.
 - **The dropped brush.** A shoe-shiner drops a brush; when you return it, they offer a "free" shine, then ask for an inflated price.
 - **Taxi overcharging.** Make sure the meter is on, or agree on a price first. Taxi apps help in Istanbul.
-- **Unofficial guides and carpet-shop detours.** Be wary of unsolicited offers to show you around. Hire licensed guides through official channels or your hotel.
+- **Unofficial guides and carpet-shop detours.** Be wary of unsolicited offers to show you around. Hire licensed guides through official channels or your hotel. Tour and travel agencies must hold a licence from the Ministry of Culture and Tourism. Ask for the agency's licence number before you pay.
+- **Unofficial e-Visa websites.** If you need a visa, apply only through the official [e-Visa portal](https://www.evisa.gov.tr/). Look-alike sites charge extra fees for the same application.
 
 ## Theft and personal safety
 
@@ -52,7 +56,7 @@ Women travellers generally find Turkey welcoming, but may experience unwanted at
 
 ## Earthquakes
 
-Turkey is in an active seismic zone, and earthquakes are a real risk. Familiarise yourself with what to do: **drop, cover and hold on** during shaking, then move to open ground away from buildings once it stops. Follow the instructions of local authorities, and keep your phone charged and your passport accessible.
+Turkey is in an active seismic zone, and earthquakes are a real risk. Familiarise yourself with what to do: **drop, cover and hold on** during shaking, then move to open ground away from buildings once it stops. Follow the instructions of local authorities, including Turkey's disaster and emergency agency, [AFAD](https://www.afad.gov.tr/), and keep your phone charged and your passport accessible.
 
 ## Health
 

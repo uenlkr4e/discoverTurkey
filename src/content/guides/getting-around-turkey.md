@@ -49,7 +49,7 @@ Turkey's intercity coach network is extensive, comfortable and reliable. Major c
 
 Turkey's high-speed trains (YHT) are fast and comfortable on the routes they serve, linking Istanbul, Ankara, Eskişehir and Konya. Conventional and regional trains are slower but scenic. In the Aegean, regional and suburban trains are a practical way to reach Selçuk for Ephesus.
 
-Popular trains, including the long-distance sleeper routes, can sell out, so book as early as you can.
+Popular trains, including the long-distance sleeper routes, can sell out, so book as early as you can. Timetables and tickets are on the website of the state rail operator, [TCDD Taşımacılık](https://www.tcddtasimacilik.gov.tr/).
 
 ## Ferries and boats
 

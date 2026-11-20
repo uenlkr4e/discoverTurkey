@@ -53,8 +53,8 @@ stops:
     title: Sunrise and departure
     plan: Watch, or join, the sunrise balloon flights, then fly back to Istanbul for your onward connection.
 tags: [archaeology, roman, byzantine, museums]
-relatedDestinations: [istanbul, ephesus, izmir, cappadocia]
-relatedGuides: [getting-around-turkey, when-to-visit-turkey]
+relatedDestinations: [istanbul, ephesus, izmir, cappadocia, pamukkale]
+relatedGuides: [getting-around-turkey, when-to-visit-turkey, museum-tickets-and-passes]
 relatedItineraries: [classic-week-istanbul-and-cappadocia]
 author: editorial-team
 status: published
@@ -69,7 +69,7 @@ Turkey holds an extraordinary density of history: Hittites, Greeks, Romans, Byza
 
 - **Pick your season.** Spring and autumn are by far the best: the Aegean sites are hot, exposed and crowded in high summer.
 - **Check the domestic flights.** Routes between İzmir and Cappadocia vary by season. If there's no direct flight, connect through Istanbul or Ankara.
-- **Consider a museum pass.** If you plan to visit many state museums and archaeological sites, compare the cost of a museum pass with individual tickets.
+- **Consider a museum pass.** If you plan to visit many state museums and archaeological sites, compare the cost of a museum pass with individual tickets. The Ministry of Culture and Tourism's [official museum site](https://muze.gov.tr/) sells a nationwide **MuseumPass Türkiye**, as well as regional passes for Istanbul, Cappadocia and the Aegean. Some highlights on this route, such as the Topkapı Palace Harem, the Ephesus Terrace Houses and Göreme's Dark Church, are ticketed separately.
 
 ## Adapting the plan
 

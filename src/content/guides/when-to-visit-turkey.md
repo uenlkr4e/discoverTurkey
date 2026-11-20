@@ -14,6 +14,7 @@ factsToVerify:
   - Dates of Ramazan Bayramı and Kurban Bayramı for the year of publication
   - Fixed national public holidays and their current dates
   - Typical seasonal opening and closing of resort hotels on the south coast
+  - Which sites take part in the Night Museums programme this summer, and whether it is running
 tags: [weather, seasons, holidays, planning, crowds]
 relatedDestinations: [istanbul, cappadocia, antalya, turquoise-coast]
 relatedGuides: [etiquette-and-customs]
@@ -38,7 +39,7 @@ Spring brings mild weather and green landscapes, and is ideal for sightseeing an
 
 ### Summer (June to August)
 
-Summer is hot and dry almost everywhere, very hot on the south coast and inland, and the peak season for beach holidays. It's the busiest and often most expensive time, especially during Turkish school holidays. Sightseeing at exposed ancient sites is tiring in the midday heat, so plan early starts.
+Summer is hot and dry almost everywhere, very hot on the south coast and inland, and the peak season for beach holidays. It's the busiest and often most expensive time, especially during Turkish school holidays. Sightseeing at exposed ancient sites is tiring in the midday heat, so plan early starts. In recent summers, several major sites, including Ephesus, Hierapolis (Pamukkale), Patara and Side, have opened into the evening as part of the Ministry of Culture and Tourism's [Night Museums](https://goturkiye.com/night-museums) programme.
 
 ### Autumn (September to November)
 
@@ -56,6 +57,8 @@ Winters are cool and rainy in Istanbul and on the coasts, and cold with snow in 
 | Cappadocia | April–June, September–October | n/a |
 | Aegean (İzmir, Ephesus) | April–June, September–October | June–September |
 | Mediterranean (Antalya, Turquoise Coast) | March–May, October–November | June–October |
+
+Closer to your trip, check the forecast with the [Turkish State Meteorological Service (MGM)](https://www.mgm.gov.tr/), which also issues official weather warnings.
 
 ## Holidays to plan around
 
