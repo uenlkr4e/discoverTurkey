@@ -85,7 +85,12 @@ const mainHtml = insertInContentAd(await Astro.slots.render('default'), adSlotHt
 
 <style>
   .article-head {
+    max-width: 52rem;
     margin-top: var(--space-5);
+  }
+
+  .article-head h1 {
+    margin-bottom: var(--space-4);
   }
 
   .article-grid {
@@ -101,6 +106,7 @@ const mainHtml = insertInContentAd(await Astro.slots.render('default'), adSlotHt
   @media (min-width: 1024px) {
     .article-grid:has(.article-aside) {
       grid-template-columns: minmax(0, 1fr) 300px;
+      gap: var(--space-6);
     }
 
     .article-aside {
@@ -110,5 +116,22 @@ const mainHtml = insertInContentAd(await Astro.slots.render('default'), adSlotHt
 
   .article-main > :global(:first-child) {
     margin-top: 0;
+  }
+
+  /* Section headings in the article body get a small star marker. */
+  .article-main :global(section > h2) {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: var(--space-6);
+  }
+
+  .article-main :global(section > h2)::before {
+    content: '';
+    flex: none;
+    width: 0.6em;
+    height: 0.6em;
+    background: var(--saffron);
+    mask: var(--star) center / contain no-repeat;
   }
 </style>

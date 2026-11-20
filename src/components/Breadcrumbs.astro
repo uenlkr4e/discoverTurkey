@@ -28,17 +28,24 @@ const { crumbs } = Astro.props;
   ol {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 0 var(--space-2);
-    margin: var(--space-3) 0 0;
+    margin: var(--space-4) 0 0;
     padding: 0;
     list-style: none;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    font-weight: 500;
     color: var(--muted);
   }
 
   li:not(:last-child)::after {
-    content: '/';
+    content: '';
+    display: inline-block;
+    width: 0.55em;
+    height: 0.55em;
     margin-left: var(--space-2);
+    background: var(--saffron);
+    mask: var(--star) center / contain no-repeat;
   }
 
   a,
@@ -49,5 +56,14 @@ const { crumbs } = Astro.props;
 
   a {
     color: var(--muted);
+    text-decoration-color: var(--line);
+  }
+
+  a:hover {
+    color: var(--terracotta);
+  }
+
+  [aria-current='page'] {
+    color: var(--ink);
   }
 </style>

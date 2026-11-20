@@ -28,32 +28,88 @@ const Heading = `h${headingLevel}` as 'h2' | 'h3';
   .tiles {
     display: grid;
     gap: var(--space-3);
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
     list-style: none;
     margin: 0;
     padding: 0;
   }
 
+  /* Each tile takes a glaze from the Iznik palette; all pairs exceed 4.5:1 with the cream text. */
   li {
+    --glaze: var(--cobalt);
     position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: clamp(9rem, 4rem + 12vw, 13rem);
     padding: var(--space-4);
-    background: var(--accent-soft);
-    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--tile-dark) 0 0 / 56px 56px, var(--glaze);
+    color: #f3e7d3;
+    border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg) 4px;
+    box-shadow: var(--shadow-sm);
+    transition:
+      transform 0.3s var(--ease),
+      box-shadow 0.3s var(--ease);
+  }
+
+  li:nth-child(5n + 2) {
+    --glaze: var(--terracotta);
+  }
+
+  li:nth-child(5n + 3) {
+    --glaze: var(--accent);
+  }
+
+  li:nth-child(5n + 4) {
+    --glaze: var(--olive);
+  }
+
+  li:nth-child(5n + 5) {
+    --glaze: #7a4a10;
+  }
+
+  /* Large decorative star in the corner. */
+  li::before {
+    content: '';
+    position: absolute;
+    top: -1.75rem;
+    right: -1.75rem;
+    width: 7.5rem;
+    height: 7.5rem;
+    background: rgb(255 251 244 / 13%);
+    mask: var(--star) center / contain no-repeat;
+    transition: transform 0.8s var(--ease);
+    pointer-events: none;
+  }
+
+  li:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+  }
+
+  li:hover::before {
+    transform: rotate(45deg) scale(1.08);
   }
 
   li:focus-within {
     outline: 3px solid var(--focus);
-    outline-offset: 2px;
+    outline-offset: 3px;
   }
 
   .tile-title {
     margin: 0 0 var(--space-2);
-    font-size: 1.3rem;
+    font-size: 1.6rem;
+    color: #fffbf4;
   }
 
   .tile-title a {
-    color: var(--ink);
+    color: #fffbf4;
     text-decoration: none;
+  }
+
+  .tile-title a:hover {
+    color: #fffbf4;
   }
 
   .tile-title a::after {
@@ -68,6 +124,8 @@ const Heading = `h${headingLevel}` as 'h2' | 'h3';
 
   p {
     margin: 0;
-    color: var(--muted);
+    color: #f3e7d3;
+    font-size: 0.98rem;
+    line-height: 1.5;
   }
 </style>

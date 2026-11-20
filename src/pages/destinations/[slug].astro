@@ -117,21 +117,38 @@ const place = touristDestinationLd({
     display: grid;
     gap: var(--space-3);
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
-    margin: 0;
+    margin: var(--space-4) 0 0;
   }
 
   .seasons div {
-    padding: var(--space-3);
+    --season: var(--olive);
+    padding: var(--space-4) var(--space-4) var(--space-3);
     background: var(--surface);
     border: 1px solid var(--line);
-    border-radius: var(--radius);
+    border-top: 4px solid var(--season);
+    border-radius: 6px 6px var(--radius) var(--radius);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .seasons div:nth-child(2) {
+    --season: var(--saffron);
+  }
+
+  .seasons div:nth-child(3) {
+    --season: var(--terracotta);
+  }
+
+  .seasons div:nth-child(4) {
+    --season: var(--cobalt);
   }
 
   dt {
-    font-weight: 700;
+    font-family: var(--font-display), Georgia, serif;
+    font-size: 1.25rem;
   }
 
   dd {
     margin: var(--space-1) 0 0;
+    color: var(--muted);
   }
 </style>

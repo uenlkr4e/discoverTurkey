@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import AdSlot from '../components/AdSlot.astro';
 import Card from '../components/Card.astro';
 import InterestTiles from '../components/InterestTiles.astro';
@@ -29,6 +30,8 @@ const season = seasonFor(new Date());
 const featured = destinations.filter((d) => d.data.featured).slice(0, 6);
 const seasonal = destinations.filter((d) => d.data.seasonalHighlight?.season === season);
 const site = Astro.site!;
+// The hero shows a destination that is in season now, falling back to the lead featured one.
+const heroImage = (seasonal[0] ?? featured[0])?.data.heroImage;
 ---
 
 <BaseLayout
@@ -39,13 +42,35 @@ const site = Astro.site!;
   jsonLd={[websiteLd(site), organizationLd(site)]}
 >
   <section class="hero">
-    <div class="container">
-      <h1>{SITE.tagline}</h1>
-      <p class="lede">
-        Destination guides, day-by-day itineraries and practical advice for planning your trip, all reviewed by our
-        editors.
-      </p>
-      <SearchBox id="home-search" />
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <h1>{SITE.tagline}</h1>
+        <p class="lede">
+          Destination guides, day-by-day itineraries and practical advice for planning your trip, all reviewed by our
+          editors.
+        </p>
+        <SearchBox id="home-search" />
+      </div>
+      {
+        heroImage && (
+          <figure class="hero-art">
+            <div class="arch">
+              <Image
+                src={heroImage.src}
+                alt={heroImage.alt}
+                widths={[480, 720, 960, 1280]}
+                sizes="(min-width: 1024px) 30rem, (min-width: 640px) 60vw, 100vw"
+                priority
+                class="arch-img"
+              />
+            </div>
+            <figcaption>
+              Photo: <a href={heroImage.credit.sourceUrl} rel="noopener">{heroImage.credit.author}</a>,{' '}
+              {heroImage.credit.license}
+            </figcaption>
+          </figure>
+        )
+      }
     </div>
   </section>
 
@@ -54,7 +79,7 @@ const site = Astro.site!;
       featured.length > 0 && (
         <section class="section" aria-labelledby="featured">
           <h2 id="featured">Featured destinations</h2>
-          <ul class="card-grid">
+          <ul class="card-grid featured-grid">
             {featured.map((d) => (
               <li>
                 <Card href={hrefFor(d)} title={d.data.title} summary={d.data.summary} image={d.data.heroImage.src} />
@@ -67,9 +92,9 @@ const site = Astro.site!;
 
     {
       seasonal.length > 0 && (
-        <section class="section" aria-labelledby="seasonal">
+        <section class="section band" aria-labelledby="seasonal">
           <h2 id="seasonal">Where to go in {season}</h2>
-          <ul class="card-grid">
+          <ul class="card-grid seasonal-grid">
             {seasonal.map((d) => (
               <li>
                 <Card
@@ -89,7 +114,9 @@ const site = Astro.site!;
       interests.length > 0 && (
         <section class="section" aria-labelledby="interests">
           <h2 id="interests">Browse by interest</h2>
-          <InterestTiles interests={interests} />
+          <div class="interest-wrap">
+            <InterestTiles interests={interests} />
+          </div>
         </section>
       )
     }
@@ -111,16 +138,16 @@ const site = Astro.site!;
 
     {
       guides.length > 0 && (
-        <section class="section" aria-labelledby="plan">
+        <section class="section band" aria-labelledby="plan">
           <h2 id="plan">Plan your trip</h2>
-          <ul class="card-grid">
+          <ul class="card-grid three-up">
             {guides.slice(0, 6).map((g) => (
               <li>
                 <Card href={hrefFor(g)} title={g.data.title} summary={g.data.summary} />
               </li>
             ))}
           </ul>
-          <p>
+          <p class="more-link">
             <a href="/guides/">All travel tips</a>
           </p>
         </section>
@@ -131,7 +158,7 @@ const site = Astro.site!;
       itineraries.length > 0 && (
         <section class="section" aria-labelledby="itineraries">
           <h2 id="itineraries">Popular itineraries</h2>
-          <ul class="card-grid">
+          <ul class="card-grid three-up">
             {itineraries.slice(0, 3).map((it) => (
               <li>
                 <Card
@@ -144,7 +171,7 @@ const site = Astro.site!;
               </li>
             ))}
           </ul>
-          <p>
+          <p class="more-link">
             <a href="/itineraries/">All itineraries</a>
           </p>
         </section>
@@ -155,12 +182,253 @@ const site = Astro.site!;
 </BaseLayout>
 
 <style>
+  /* ---------- Hero ---------- */
   .hero {
-    padding-block: var(--space-6);
-    background: linear-gradient(180deg, var(--accent-soft), var(--paper));
+    position: relative;
+    padding-block: var(--space-6) var(--space-7);
+    overflow: hidden;
+    background:
+      radial-gradient(60rem 30rem at 85% 10%, rgb(226 164 43 / 16%), transparent 70%),
+      radial-gradient(40rem 30rem at 0% 100%, rgb(11 97 104 / 10%), transparent 70%),
+      var(--paper);
+    border-bottom: 1px solid var(--line);
+  }
+
+  /* Faint tile lattice, fading out towards the copy. */
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--tile-light) 0 0 / 56px 56px;
+    mask: linear-gradient(110deg, transparent 35%, #000 85%);
+    pointer-events: none;
+  }
+
+  .hero-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-6);
+    align-items: center;
   }
 
   .hero h1 {
-    max-width: 18ch;
+    max-width: 14ch;
+    font-size: clamp(2.6rem, 1.6rem + 4.2vw, 5rem);
+    line-height: 1;
+  }
+
+  .hero .lede {
+    max-width: 44ch;
+  }
+
+  .hero-copy :global(.search-box label) {
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .hero-art {
+    position: relative;
+    margin: 0;
+    justify-self: center;
+    width: min(100%, 30rem);
+  }
+
+  /* Pointed-dome arch, after the windows and mihrabs of Ottoman architecture. */
+  .arch {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border-radius: 50% 50% var(--radius-lg) var(--radius-lg) / 32% 32% var(--radius-lg) var(--radius-lg);
+    background: var(--paper-deep);
+    box-shadow: var(--shadow-md);
+  }
+
+  .hero-art::before,
+  .hero-art::after {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+  }
+
+  /* Offset outline of the arch. */
+  .hero-art::before {
+    inset: -0.9rem 0.9rem auto -0.9rem;
+    aspect-ratio: 4 / 5;
+    border: 2px solid var(--cobalt);
+    border-radius: 50% 50% var(--radius-lg) var(--radius-lg) / 32% 32% var(--radius-lg) var(--radius-lg);
+  }
+
+  /* Saffron star "keystone". */
+  .hero-art::after {
+    z-index: 1;
+    top: 6%;
+    right: -0.75rem;
+    width: 4.5rem;
+    height: 4.5rem;
+    background: var(--saffron);
+    mask: var(--star) center / contain no-repeat;
+    animation: spin-in 1.2s var(--ease) both;
+  }
+
+  .arch-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: settle 1.6s var(--ease) both;
+  }
+
+  .hero-art figcaption {
+    margin-top: var(--space-3);
+    font-size: 0.82rem;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .hero-art figcaption a {
+    color: var(--muted);
+  }
+
+  @keyframes settle {
+    from {
+      transform: scale(1.08);
+    }
+  }
+
+  @keyframes spin-in {
+    from {
+      transform: rotate(-90deg) scale(0.4);
+    }
+  }
+
+  @media (max-width: 639px) {
+    .hero {
+      padding-block: var(--space-5) var(--space-6);
+    }
+
+    .hero-art {
+      width: min(100%, 22rem);
+    }
+
+    .arch {
+      aspect-ratio: 1 / 1;
+    }
+
+    .hero-art::before {
+      display: none;
+    }
+
+    .hero-art::after {
+      width: 3.25rem;
+      height: 3.25rem;
+      right: -0.25rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hero {
+      padding-block: var(--space-7);
+    }
+
+    .hero-grid {
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      gap: var(--space-7);
+    }
+
+    .hero-art {
+      justify-self: end;
+    }
+  }
+
+  /* ---------- Featured: editorial mosaic on wider screens ---------- */
+  @media (min-width: 640px) {
+    .featured-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .featured-grid > li:first-child {
+      grid-column: 1 / -1;
+    }
+
+    .featured-grid > li:first-child :global(.card-img) {
+      aspect-ratio: 2 / 1;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .featured-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .featured-grid > li:first-child {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+
+    .featured-grid > li:first-child :global(.card-img) {
+      flex: 1 1 auto;
+      height: 0;
+      min-height: 18rem;
+      aspect-ratio: auto;
+    }
+
+    .featured-grid > li:first-child :global(.card-body) {
+      flex: none;
+    }
+
+    .featured-grid > li:first-child :global(.card-title) {
+      font-size: 2.1rem;
+    }
+
+    .featured-grid > li:first-child :global(.card-summary) {
+      font-size: 1.1rem;
+    }
+  }
+
+  /* ---------- Seasonal picks: wide, horizontal cards ---------- */
+  .seasonal-grid {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 34rem), 1fr));
+  }
+
+  @media (min-width: 640px) {
+    .seasonal-grid :global(.card) {
+      flex-direction: row;
+    }
+
+    .seasonal-grid :global(.card-img) {
+      width: 46%;
+      flex: none;
+      aspect-ratio: auto;
+      min-height: 15rem;
+    }
+
+    .seasonal-grid :global(.card-body) {
+      align-self: center;
+      padding: var(--space-5);
+    }
+
+    .seasonal-grid :global(.card-title) {
+      font-size: 1.9rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .three-up {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .interest-wrap :global(.tiles) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  /* ---------- Full-bleed tinted bands (no extra markup) ---------- */
+  .band {
+    padding-block: var(--space-6);
+    background: var(--paper-deep);
+    box-shadow: 0 0 0 100vmax var(--paper-deep);
+    clip-path: inset(0 -100vmax);
   }
 </style>

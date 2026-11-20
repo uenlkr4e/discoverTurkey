@@ -6,17 +6,17 @@
 .ad-slot {
   margin-block: var(--space-5);
   padding: var(--space-2) var(--space-2) var(--space-3);
-  background: #f2efe9;
-  border: 1px dashed var(--line);
+  background: #f1e9dc;
+  border: 1px dashed #cdbb9d;
   border-radius: var(--radius);
   contain: layout;
 }
 
 .ad-label {
   margin: 0 0 var(--space-2);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
   text-align: center;
   text-transform: uppercase;
   color: var(--muted);

@@ -26,24 +26,33 @@ const { facts } = Astro.props;
 <style>
   .facts {
     display: grid;
-    gap: var(--space-3);
+    gap: var(--space-4);
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
     margin: 0 0 var(--space-5);
-    padding: var(--space-4);
-    background: var(--sand);
-    border-radius: var(--radius);
+    padding: var(--space-4) var(--space-4);
+    background: var(--tile-light) 0 0 / 56px 56px, var(--paper-deep);
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--cobalt);
+    border-radius: 6px 6px var(--radius-lg) var(--radius-lg);
+  }
+
+  .facts > div {
+    padding-left: var(--space-3);
+    border-left: 2px solid var(--saffron);
   }
 
   dt {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 700;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--muted);
+    color: var(--terracotta);
   }
 
   dd {
     margin: var(--space-1) 0 0;
-    font-weight: 600;
+    font-family: var(--font-display), Georgia, serif;
+    font-size: 1.15rem;
+    line-height: 1.3;
   }
 </style>

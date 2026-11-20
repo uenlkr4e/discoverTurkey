@@ -15,6 +15,24 @@ const { title, lede } = Astro.props;
 
 <style>
   .page-intro {
-    margin-block: var(--space-5) var(--space-5);
+    position: relative;
+    margin-block: var(--space-5) var(--space-6);
+    padding-bottom: var(--space-5);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .page-intro::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -7px;
+    width: 14px;
+    height: 14px;
+    background: var(--terracotta);
+    mask: var(--star) center / contain no-repeat;
+  }
+
+  .page-intro :global(.lede) {
+    margin-bottom: 0;
   }
 </style>

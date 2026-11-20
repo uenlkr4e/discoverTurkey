@@ -25,15 +25,17 @@ const year = new Date().getFullYear();
 
 <style>
   .site-footer {
-    margin-top: var(--space-6);
-    padding-block: var(--space-5) var(--space-3);
-    background: var(--sand);
-    border-top: 1px solid var(--line);
+    margin-top: var(--space-7);
+    padding-block: var(--space-6) var(--space-4);
+    background: var(--tile-dark) 0 0 / 56px 56px, var(--cobalt-deep);
+    color: #f3e7d3;
+    border-top: 4px solid var(--saffron);
+    --focus: var(--saffron);
   }
 
   .grid {
     display: grid;
-    gap: var(--space-4);
+    gap: var(--space-5);
   }
 
   @media (min-width: 640px) {
@@ -43,14 +45,26 @@ const year = new Date().getFullYear();
   }
 
   .brand {
-    margin: 0 0 var(--space-2);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0 0 var(--space-3);
     font-family: var(--font-display), Georgia, serif;
-    font-size: 1.2rem;
-    font-weight: 700;
+    font-size: clamp(1.6rem, 1.3rem + 1vw, 2.1rem);
+    font-weight: 400;
+    color: #fffbf4;
+  }
+
+  .brand::before {
+    content: '';
+    width: 1.3rem;
+    height: 1.3rem;
+    background: var(--saffron);
+    mask: var(--star) center / contain no-repeat;
   }
 
   .muted {
-    color: var(--muted);
+    color: #c9bba6;
     max-width: 40ch;
   }
 
@@ -64,11 +78,26 @@ const year = new Date().getFullYear();
     display: inline-flex;
     align-items: center;
     min-height: 44px;
-    color: var(--ink);
+  }
+
+  /* The privacy-settings button keeps its own display so its [hidden] state still applies. */
+  a,
+  ul :global(button) {
+    color: #f3e7d3;
+    text-decoration-color: rgb(226 164 43 / 50%);
+  }
+
+  a:hover,
+  ul :global(button:hover) {
+    color: var(--saffron);
+    text-decoration-color: var(--saffron);
   }
 
   .copy {
-    margin-top: var(--space-4);
+    margin-top: var(--space-5);
+    padding-top: var(--space-3);
+    border-top: 1px solid rgb(243 231 211 / 18%);
     font-size: 0.9rem;
+    max-width: none;
   }
 </style>

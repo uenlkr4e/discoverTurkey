@@ -48,8 +48,23 @@ const items = [...NAV, { label: 'Search', href: '/search/' }];
     position: sticky;
     top: 0;
     z-index: 50;
-    background: var(--surface);
+    background: rgb(247 239 226 / 92%);
     border-bottom: 1px solid var(--line);
+    backdrop-filter: saturate(1.4) blur(10px);
+  }
+
+  /* A thin tile-coloured band along the very top of the page. */
+  .site-header::before {
+    content: '';
+    display: block;
+    height: 4px;
+    background: linear-gradient(
+      90deg,
+      var(--cobalt) 0 25%,
+      var(--accent) 25% 50%,
+      var(--saffron) 50% 75%,
+      var(--terracotta) 75% 100%
+    );
   }
 
   .bar {
@@ -64,12 +79,31 @@ const items = [...NAV, { label: 'Search', href: '/search/' }];
   .brand {
     display: inline-flex;
     align-items: center;
+    gap: 0.55rem;
     min-height: 44px;
     font-family: var(--font-display), Georgia, serif;
-    font-size: 1.3rem;
-    font-weight: 700;
+    font-size: 1.45rem;
+    font-weight: 400;
+    letter-spacing: -0.01em;
     color: var(--ink);
     text-decoration: none;
+  }
+
+  .brand::before {
+    content: '';
+    width: 1.35rem;
+    height: 1.35rem;
+    background: var(--terracotta);
+    mask: var(--star) center / contain no-repeat;
+    transition: transform 0.6s var(--ease);
+  }
+
+  .brand:hover {
+    color: var(--ink);
+  }
+
+  .brand:hover::before {
+    transform: rotate(90deg);
   }
 
   /* Without JavaScript the menu is always open and the toggle is hidden. */
@@ -77,14 +111,19 @@ const items = [...NAV, { label: 'Search', href: '/search/' }];
     display: none;
     min-height: 44px;
     min-width: 44px;
-    padding: 0 1rem;
-    border: 1px solid var(--line);
+    padding: 0 1.1rem;
+    border: 1px solid var(--ink);
     border-radius: 999px;
-    background: var(--surface);
+    background: transparent;
     color: var(--ink);
     font: inherit;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
+  }
+
+  .menu-toggle[aria-expanded='true'] {
+    background: var(--ink);
+    color: var(--paper);
   }
 
   :global(.js) .menu-toggle {
@@ -114,24 +153,27 @@ const items = [...NAV, { label: 'Search', href: '/search/' }];
   }
 
   .site-nav a {
+    position: relative;
     display: flex;
     align-items: center;
     min-height: 44px;
-    padding: 0 0.75rem;
-    border-radius: 8px;
+    padding: 0 0.85rem;
+    border-radius: 10px;
     color: var(--ink);
     font-weight: 600;
     text-decoration: none;
   }
 
   .site-nav a:hover {
-    background: var(--accent-soft);
+    background: var(--paper-deep);
+    color: var(--ink);
   }
 
   .site-nav a[aria-current='page'] {
-    color: var(--accent);
+    color: var(--terracotta);
     text-decoration: underline;
-    text-underline-offset: 0.35em;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.4em;
   }
 
   @media (min-width: 1024px) {
@@ -148,6 +190,12 @@ const items = [...NAV, { label: 'Search', href: '/search/' }];
 
     .site-nav ul {
       display: flex;
+      gap: var(--space-1);
+    }
+
+    .site-nav a:hover {
+      background: transparent;
+      color: var(--terracotta);
     }
   }
 </style>

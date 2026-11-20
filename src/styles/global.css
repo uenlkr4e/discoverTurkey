@@ -1,14 +1,26 @@
+/*
+ * Visual direction: "Anatolian atlas". Warm cream paper, Iznik cobalt and turquoise,
+ * terracotta and saffron accents, a high-contrast display serif (Gloock) over a crisp
+ * grotesque (Instrument Sans), and a Seljuk eight-point-star motif used sparingly.
+ * Every text/background pair below is checked for WCAG AA (4.5:1 body, 3:1 focus).
+ */
 :root {
-  --paper: #fbf8f3;
-  --surface: #ffffff;
-  --ink: #1c2530;
-  --muted: #535d69;
-  --line: #d9d3c7;
-  --accent: #0b5e6b;
-  --accent-ink: #ffffff;
-  --accent-soft: #e3f0f1;
-  --sand: #f3ece0;
-  --focus: #a33a1f;
+  --paper: #f7efe2;
+  --paper-deep: #efe3cf;
+  --surface: #fffbf4;
+  --ink: #241d1a;
+  --muted: #5f544b;
+  --line: #e2d4bd;
+  --accent: #0b6168; /* Iznik turquoise, links: 6.3:1 on paper */
+  --accent-ink: #fffbf4;
+  --accent-soft: #e4ece6;
+  --cobalt: #1c3d6e;
+  --cobalt-deep: #13233b;
+  --terracotta: #a8432a; /* 5.3:1 on paper */
+  --saffron: #e2a42b; /* decorative on light; text only on dark */
+  --olive: #4f5d2f;
+  --sand: var(--paper-deep);
+  --focus: #a8432a;
 
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -16,10 +28,20 @@
   --space-4: 1.5rem;
   --space-5: 2rem;
   --space-6: 3rem;
-  --radius: 12px;
-  --maxw: 72rem;
+  --space-7: 4.5rem;
+  --radius: 14px;
+  --radius-lg: 22px;
+  --maxw: 74rem;
   --measure: 68ch;
-  --header-h: 4rem;
+  --header-h: 4.25rem;
+  --shadow-sm: 0 1px 2px rgb(36 29 26 / 6%), 0 2px 6px rgb(36 29 26 / 5%);
+  --shadow-md: 0 2px 4px rgb(36 29 26 / 6%), 0 12px 28px -8px rgb(36 29 26 / 18%);
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  /* Eight-point star lattice, drawn as a tiny inline SVG (no extra request). */
+  --tile-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' fill='none' stroke='%231c3d6e' stroke-opacity='.09' stroke-width='1.2'%3E%3Cpath d='M16 16h24v24H16zM28 11l17 17-17 17-17-17z'/%3E%3Cpath d='M0 0l6 6M56 0l-6 6M0 56l6-6M56 56l-6-6'/%3E%3C/svg%3E");
+  --tile-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' fill='none' stroke='%23e2a42b' stroke-opacity='.12' stroke-width='1.2'%3E%3Cpath d='M16 16h24v24H16zM28 11l17 17-17 17-17-17z'/%3E%3Cpath d='M0 0l6 6M56 0l-6 6M0 56l6-6M56 56l-6-6'/%3E%3C/svg%3E");
+  --star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0l3.5 3.5h5v5L24 12l-3.5 3.5v5h-5L12 24l-3.5-3.5h-5v-5L0 12l3.5-3.5v-5h5z' fill='%23000'/%3E%3C/svg%3E");
 }
 
 *,
@@ -39,45 +61,66 @@ body {
   color: var(--ink);
   font-family: var(--font-body), system-ui, sans-serif;
   font-size: 1.0625rem;
-  line-height: 1.6;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 h1,
 h2,
 h3 {
   font-family: var(--font-display), Georgia, serif;
-  line-height: 1.2;
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
   text-wrap: balance;
+  color: var(--ink);
 }
 
 h1 {
-  font-size: clamp(2rem, 1.4rem + 2.5vw, 3rem);
+  font-size: clamp(2.3rem, 1.5rem + 3.4vw, 4rem);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
   margin: 0 0 var(--space-3);
 }
 
 h2 {
-  font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+  font-size: clamp(1.65rem, 1.25rem + 1.4vw, 2.4rem);
   margin: var(--space-6) 0 var(--space-3);
 }
 
 h3 {
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   margin: var(--space-4) 0 var(--space-2);
+}
+
+p {
+  text-wrap: pretty;
 }
 
 a {
   color: var(--accent);
-  text-underline-offset: 0.15em;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  transition:
+    color 0.15s ease,
+    text-decoration-color 0.15s ease;
 }
 
 a:hover {
+  color: var(--terracotta);
   text-decoration-thickness: 2px;
+}
+
+::selection {
+  background: var(--saffron);
+  color: var(--ink);
 }
 
 :focus-visible {
   outline: 3px solid var(--focus);
-  outline-offset: 2px;
-  border-radius: 2px;
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
 main:focus {
@@ -91,7 +134,7 @@ img {
 }
 
 .container {
-  width: min(100% - 2rem, var(--maxw));
+  width: min(100% - 2.5rem, var(--maxw));
   margin-inline: auto;
 }
 
@@ -101,9 +144,10 @@ img {
   top: -100px;
   z-index: 100;
   padding: 0.75rem 1rem;
-  background: var(--ink);
-  color: #fff;
+  background: var(--cobalt-deep);
+  color: var(--surface);
   border-radius: 0 0 8px 8px;
+  font-weight: 600;
 }
 
 .skip-link:focus {
@@ -122,6 +166,8 @@ img {
   border: 0;
 }
 
+/* ---------- Long-form text ---------- */
+
 .prose {
   max-width: var(--measure);
 }
@@ -134,25 +180,116 @@ img {
   margin-top: var(--space-1);
 }
 
+.prose ul li::marker {
+  color: var(--terracotta);
+}
+
+.prose ol li::marker {
+  color: var(--terracotta);
+  font-weight: 700;
+}
+
+.prose blockquote {
+  margin: var(--space-4) 0;
+  padding: var(--space-2) 0 var(--space-2) var(--space-4);
+  border-left: 3px solid var(--saffron);
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+
+.prose hr {
+  height: 14px;
+  margin: var(--space-5) 0;
+  border: 0;
+  background: var(--terracotta);
+  mask: var(--star) center / 14px no-repeat;
+}
+
 .lede {
-  font-size: 1.2rem;
+  font-size: clamp(1.15rem, 1.05rem + 0.4vw, 1.3rem);
+  line-height: 1.55;
   color: var(--muted);
-  max-width: var(--measure);
-  margin: 0 0 var(--space-3);
+  max-width: 60ch;
+  margin: 0 0 var(--space-4);
 }
 
 .eyebrow {
-  margin: 0 0 var(--space-1);
-  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin: 0 0 var(--space-2);
+  font-size: 0.78rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--terracotta);
 }
+
+.eyebrow::before {
+  content: '';
+  flex: none;
+  width: 0.8em;
+  height: 0.8em;
+  background: currentColor;
+  mask: var(--star) center / contain no-repeat;
+}
+
+/* ---------- Section headings ---------- */
+
+.section {
+  margin-block: var(--space-7);
+}
+
+.section > h2:first-child {
+  margin-top: 0;
+}
+
+/* A short saffron rule with a star introduces each section heading. */
+.section > h2:first-child::before {
+  content: '';
+  display: block;
+  width: 3.25rem;
+  height: 12px;
+  margin-bottom: var(--space-3);
+  background: var(--saffron);
+  mask:
+    var(--star) left center / 12px 12px no-repeat,
+    linear-gradient(#000, #000) 18px center / calc(100% - 18px) 2px no-repeat;
+}
+
+.more-link {
+  margin: var(--space-4) 0 0;
+}
+
+.more-link a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  min-height: 44px;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--cobalt);
+}
+
+.more-link a::after {
+  content: '→';
+  transition: transform 0.2s var(--ease);
+}
+
+.more-link a:hover {
+  color: var(--terracotta);
+}
+
+.more-link a:hover::after {
+  transform: translateX(4px);
+}
+
+/* ---------- Grids, chips, buttons ---------- */
 
 .card-grid {
   display: grid;
-  gap: var(--space-4);
+  gap: var(--space-5) var(--space-4);
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
   list-style: none;
   padding: 0;
@@ -171,19 +308,41 @@ img {
 .chip-list a {
   display: inline-flex;
   align-items: center;
+  gap: 0.55em;
   min-height: 44px;
-  padding: 0 1rem;
+  padding: 0 1.1rem;
   border: 1px solid var(--line);
   border-radius: 999px;
   background: var(--surface);
   color: var(--ink);
   font-weight: 600;
   text-decoration: none;
+  box-shadow: var(--shadow-sm);
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease,
+    background-color 0.15s ease,
+    transform 0.2s var(--ease);
+}
+
+.chip-list a::before {
+  content: '';
+  width: 0.7em;
+  height: 0.7em;
+  background: var(--saffron);
+  mask: var(--star) center / contain no-repeat;
+  transition: transform 0.4s var(--ease);
 }
 
 .chip-list a:hover {
-  border-color: var(--accent);
-  color: var(--accent);
+  border-color: var(--cobalt);
+  background: var(--cobalt);
+  color: var(--surface);
+  transform: translateY(-1px);
+}
+
+.chip-list a:hover::before {
+  transform: rotate(45deg);
 }
 
 .button {
@@ -191,35 +350,42 @@ img {
   align-items: center;
   justify-content: center;
   min-height: 44px;
-  padding: 0 1.25rem;
+  padding: 0 1.4rem;
   border: 0;
   border-radius: 999px;
-  background: var(--accent);
+  background: var(--cobalt);
   color: var(--accent-ink);
   font: inherit;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.01em;
   text-decoration: none;
   cursor: pointer;
+  transition: background-color 0.15s ease;
 }
 
 .button:hover {
-  background: #084a54;
-}
-
-.section {
-  margin-block: var(--space-6);
-}
-
-.section > h2:first-child {
-  margin-top: 0;
+  background: var(--terracotta);
+  color: var(--accent-ink);
 }
 
 .notice {
+  position: relative;
   max-width: var(--measure);
-  padding: var(--space-3) var(--space-4);
-  border-left: 4px solid var(--accent);
-  background: var(--accent-soft);
-  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: var(--space-3) var(--space-4) var(--space-3) calc(var(--space-4) + 1.4rem);
+  border: 1px solid #d9c49a;
+  background: #fbf0d6;
+  border-radius: var(--radius);
+}
+
+.notice::before {
+  content: '';
+  position: absolute;
+  left: var(--space-3);
+  top: 1.3rem;
+  width: 1rem;
+  height: 1rem;
+  background: var(--terracotta);
+  mask: var(--star) center / contain no-repeat;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -227,6 +393,7 @@ img {
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }

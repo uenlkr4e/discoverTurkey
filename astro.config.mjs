@@ -7,8 +7,8 @@ export default defineConfig({
   ...(process.env.CONTENT_DIR ? { cacheDir: './node_modules/.astro-fixtures' } : {}),
   fonts: [
     {
-      provider: fontProviders.fontsource(),
-      name: 'Source Sans 3',
+      provider: fontProviders.google(),
+      name: 'Instrument Sans',
       cssVariable: '--font-body',
       weights: ['400 700'],
       styles: ['normal', 'italic'],
@@ -17,9 +17,9 @@ export default defineConfig({
     },
     {
       provider: fontProviders.fontsource(),
-      name: 'Fraunces',
+      name: 'Gloock',
       cssVariable: '--font-display',
-      weights: ['700'],
+      weights: ['400'],
       styles: ['normal'],
       subsets: ['latin', 'latin-ext'],
       fallbacks: ['Georgia', 'serif'],
